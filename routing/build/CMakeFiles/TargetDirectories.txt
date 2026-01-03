@@ -1,0 +1,4 @@
+/home/collin/programming/flux/routing/build/CMakeFiles/routing.dir
+/home/collin/programming/flux/routing/build/CMakeFiles/routing_cli.dir
+/home/collin/programming/flux/routing/build/CMakeFiles/edit_cache.dir
+/home/collin/programming/flux/routing/build/CMakeFiles/rebuild_cache.dir

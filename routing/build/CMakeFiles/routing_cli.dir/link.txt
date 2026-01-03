@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/routing_cli.dir/src/main.cpp.o -o routing_cli  -Wl,-rpath,/home/collin/programming/flux/routing/build librouting.so -lbz2 -lboost_system -lboost_iostreams -lboost_date_time -lz -lexpat
