@@ -38,9 +38,13 @@ lib.route_distance.restype = ctypes.c_double
 
 # Update edge weight
 lib.update_edge_by_coordinates.argtypes = [
-    ctypes.c_double, ctypes.c_double, ctypes.c_double
+    ctypes.c_double,
+    ctypes.c_double,
+    ctypes.c_double,
+    ctypes.c_char_p
 ]
 lib.update_edge_by_coordinates.restype = None
+
 
 # By id
 lib.update_edge_by_id.argtypes = [
@@ -105,7 +109,7 @@ def route_distance(lat1, lon1, lat2, lon2):
     return dist
 
 
-def update_edge_by_coordinates(lat, lon, new_weight):
+def update_edge_by_coordinates(lat, lon, new_weight, dir="BOTH"):
     """
     Update the weight of the edge closest to the given coordinates.
     """
@@ -113,8 +117,11 @@ def update_edge_by_coordinates(lat, lon, new_weight):
         raise RuntimeError("Router not initialized. Call init() first.")
 
     lib.update_edge_by_coordinates(
-        float(lat), float(lon), float(new_weight)
-    )
+    float(lat),
+    float(lon),
+    float(new_weight),
+    dir.encode("utf-8")
+)
 
 
 def update_edge_by_id(id, new_weight):
@@ -154,7 +161,7 @@ if __name__ == "__main__":
     # 2. Simulate traffic / blockage by increasing edge weight
     accident_lat, accident_lon = (43.692+ 43.6896)/2, (-79.322 -79.3221)/2
     print(f"Updating edge near ({accident_lat}, {accident_lon})...")
-    update_edge_by_coordinates(accident_lat, accident_lon,100)  # huge weight to simulate blockage
+    update_edge_by_coordinates(accident_lat, accident_lon,100, "BOTH")  # huge weight to simulate blockage
 
     # 3. Distance after updating edges
     dist_after = route_distance(start_lat, start_lon, end_lat, end_lon)

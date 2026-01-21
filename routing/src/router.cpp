@@ -1,7 +1,13 @@
 #include "router.h"
 #include <cmath>
 #include <limits>
+#include <unordered_map>
 #include <iostream>
+
+
+std::vector<int> find_nearest_edge(double lat, double lon,
+                                   Direction dir = Direction::BOTH);
+
 
 static double haversine(double lat1, double lon1,
                         double lat2, double lon2) {
@@ -85,8 +91,45 @@ int RoutingEngine::find_nearest_node(double lat, double lon) const {
     return best_id;
 }
 
+bool RoutingEngine::matches_direction(
+    double from_lat, double from_lon,
+    double to_lat,   double to_lon,
+    Direction dir
+) {
+    if (dir == Direction::BOTH || dir == Direction::NONE) {
+        return true;
+    }
 
-int RoutingEngine::find_nearest_edge(double lat, double lon){
+    double dlat = to_lat - from_lat;  // north/south
+    double dlon = to_lon - from_lon;  // east/west
+
+    // Degenerate case: same point
+    if (dlat == 0.0 && dlon == 0.0) {
+        return false;
+    }
+
+    switch (dir) {
+        case Direction::N:  return dlat > 0;
+        case Direction::S:  return dlat < 0;
+        case Direction::E:  return dlon > 0;
+        case Direction::W:  return dlon < 0;
+
+        case Direction::NE: return dlat > 0 && dlon > 0;
+        case Direction::NW: return dlat > 0 && dlon < 0;
+        case Direction::SE: return dlat < 0 && dlon > 0;
+        case Direction::SW: return dlat < 0 && dlon < 0;
+
+        default:
+            return true;
+    }
+}
+
+
+
+std::vector<int> RoutingEngine::find_nearest_edge(double lat, double lon, Direction dir){
+    std::unordered_map<int, std::vector<int>> table;
+
+
     double best = std::numeric_limits<double>::max();
     int best_id = -1;
     std::vector<std::shared_ptr<Edge>>& edges = graph_.edges_mut();
@@ -95,12 +138,16 @@ int RoutingEngine::find_nearest_edge(double lat, double lon){
     for (int i = 0; i < (int)edges.size(); ++i) {
 
         double d = point_to_segment_distance(lat, lon, nodes[edges[i]->from].lat, nodes[edges[i]->from].lon, nodes[edges[i]->to].lat, nodes[edges[i]->to].lon);
-        if (d < best) {
+        if( matches_direction(nodes[edges[i]->from].lat, nodes[edges[i]->from].lon, nodes[edges[i]->to].lat, nodes[edges[i]->to].lon, dir)){
+             table[d].push_back(i);
+        }
+        if (d <= best) {
             best = d;
             best_id = i;
-        }
+           
+        }   
     }
-    return best_id;
+    return table[best];
 
 
 }
@@ -119,12 +166,15 @@ double RoutingEngine::route(double lat1, double lon1,
     return astar.shortest_path(graph_, start, goal).total_cost;
 }
 
-void RoutingEngine::update_edge(double lat, double lon, double weight){
-    int edge = find_nearest_edge(lat, lon);
+void RoutingEngine::update_edge(double lat, double lon, double weight, Direction dir){
+    std::vector<int> closest_edges = find_nearest_edge(lat, lon, dir);
 
-    if (edge < 0) return;
+    for (int e : closest_edges){
+        if (e < 0) return;
+        // std::cout<< e<<"\n";
 
-    graph_.update_edge_weight(edge, weight);
+        graph_.update_edge_weight(e, weight);
+    }
 
 }
 
@@ -143,7 +193,7 @@ void RoutingEngine::update_edge(int from, int to, double weight){
 
     for (auto& e : edges){
         if (to == e->to && from == e->from){
-            std::cout<< e->id<<"\n";
+            // std::cout<< e->id<<"\n";
             graph_.update_edge_weight(e->id, weight);
             return;
         }

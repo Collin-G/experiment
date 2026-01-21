@@ -94,14 +94,19 @@ int main(int argc, char* argv[]) {
     double lat2 = 43.6845;
     double lon2 = -79.339;
 
+    double acclat =  (43.692+ 43.6896)/2;
+    double acclon = (-79.322 -79.3221)/2;
+
+
+
     // int begin = routing_engine.find_nearest_node(lat1, lon1);
     // int end = routing_engine.find_nearest_node(la2, lon2);
 
     std::cout <<routing_engine.route(lat1,lon1,lat2, lon2) << "\n";
 
-    routing_engine.update_edge(0,3, 999);
+    routing_engine.update_edge(acclat,acclon, 999, Direction::BOTH);
     std::cout <<routing_engine.route(lat1,lon1,lat2, lon2) << "\n";
-
+    
 
 
 
