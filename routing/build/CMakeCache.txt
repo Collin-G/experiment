@@ -189,6 +189,12 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Path to a file.
+H3_INCLUDE_DIR:PATH=/usr/local/include
+
+//Path to a library.
+H3_LIBRARY:FILEPATH=/usr/local/lib/libh3.a
+
 //Value Computed by CMake
 osm_reader_BINARY_DIR:STATIC=/home/collin/programming/flux/routing/build
 
@@ -205,7 +211,7 @@ routing_BINARY_DIR:STATIC=/home/collin/programming/flux/routing/build
 routing_IS_TOP_LEVEL:STATIC=ON
 
 //Dependencies for the target
-routing_LIB_DEPENDS:STATIC=general;bz2;general;boost_system;general;boost_iostreams;general;boost_date_time;general;z;general;expat;
+routing_LIB_DEPENDS:STATIC=general;/usr/local/lib/libh3.a;general;bz2;general;boost_system;general;boost_iostreams;general;boost_date_time;general;z;general;expat;general;pthread;
 
 //Value Computed by CMake
 routing_SOURCE_DIR:STATIC=/home/collin/programming/flux/routing

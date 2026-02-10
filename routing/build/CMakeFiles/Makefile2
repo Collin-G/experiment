@@ -83,12 +83,12 @@ clean: CMakeFiles/routing_cli.dir/clean
 CMakeFiles/routing.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target routing"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target routing"
 .PHONY : CMakeFiles/routing.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/routing.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/routing.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 0
 .PHONY : CMakeFiles/routing.dir/rule
@@ -109,12 +109,12 @@ CMakeFiles/routing.dir/clean:
 CMakeFiles/routing_cli.dir/all: CMakeFiles/routing.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=8,9 "Built target routing_cli"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=9,10 "Built target routing_cli"
 .PHONY : CMakeFiles/routing_cli.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/routing_cli.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 9
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 10
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/routing_cli.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 0
 .PHONY : CMakeFiles/routing_cli.dir/rule

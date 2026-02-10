@@ -238,6 +238,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/matching.o: src/matching.cpp.o
+.PHONY : src/matching.o
+
+# target to build an object file
+src/matching.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching.cpp.o
+.PHONY : src/matching.cpp.o
+
+src/matching.i: src/matching.cpp.i
+.PHONY : src/matching.i
+
+# target to preprocess a source file
+src/matching.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching.cpp.i
+.PHONY : src/matching.cpp.i
+
+src/matching.s: src/matching.cpp.s
+.PHONY : src/matching.s
+
+# target to generate assembly for a file
+src/matching.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching.cpp.s
+.PHONY : src/matching.cpp.s
+
 src/osm_parser.o: src/osm_parser.cpp.o
 .PHONY : src/osm_parser.o
 
@@ -332,6 +356,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/matching.o"
+	@echo "... src/matching.i"
+	@echo "... src/matching.s"
 	@echo "... src/osm_parser.o"
 	@echo "... src/osm_parser.i"
 	@echo "... src/osm_parser.s"

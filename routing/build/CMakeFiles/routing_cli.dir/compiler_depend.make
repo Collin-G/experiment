@@ -5,6 +5,7 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /home/collin/programming/flux/routing/include/astar.h \
   /home/collin/programming/flux/routing/include/graph.h \
   /home/collin/programming/flux/routing/include/graphbuilder.h \
+  /home/collin/programming/flux/routing/include/matching.h \
   /home/collin/programming/flux/routing/include/osm_parser.h \
   /home/collin/programming/flux/routing/include/router.h \
   /usr/include/alloca.h \
@@ -36,7 +37,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/bits/basic_string.tcc \
   /usr/include/c++/11/bits/char_traits.h \
   /usr/include/c++/11/bits/charconv.h \
-  /usr/include/c++/11/bits/codecvt.h \
   /usr/include/c++/11/bits/concept_check.h \
   /usr/include/c++/11/bits/cpp_type_traits.h \
   /usr/include/c++/11/bits/cxxabi_forced.h \
@@ -47,7 +47,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/bits/exception.h \
   /usr/include/c++/11/bits/exception_defines.h \
   /usr/include/c++/11/bits/exception_ptr.h \
-  /usr/include/c++/11/bits/fstream.tcc \
   /usr/include/c++/11/bits/functexcept.h \
   /usr/include/c++/11/bits/functional_hash.h \
   /usr/include/c++/11/bits/hash_bytes.h \
@@ -71,6 +70,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/bits/postypes.h \
   /usr/include/c++/11/bits/predefined_ops.h \
   /usr/include/c++/11/bits/ptr_traits.h \
+  /usr/include/c++/11/bits/random.h \
+  /usr/include/c++/11/bits/random.tcc \
   /usr/include/c++/11/bits/range_access.h \
   /usr/include/c++/11/bits/refwrap.h \
   /usr/include/c++/11/bits/shared_ptr.h \
@@ -94,6 +95,7 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/bits/stl_iterator_base_types.h \
   /usr/include/c++/11/bits/stl_map.h \
   /usr/include/c++/11/bits/stl_multimap.h \
+  /usr/include/c++/11/bits/stl_numeric.h \
   /usr/include/c++/11/bits/stl_pair.h \
   /usr/include/c++/11/bits/stl_queue.h \
   /usr/include/c++/11/bits/stl_raw_storage_iter.h \
@@ -141,7 +143,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/ext/numeric_traits.h \
   /usr/include/c++/11/ext/string_conversions.h \
   /usr/include/c++/11/ext/type_traits.h \
-  /usr/include/c++/11/fstream \
   /usr/include/c++/11/functional \
   /usr/include/c++/11/future \
   /usr/include/c++/11/initializer_list \
@@ -155,12 +156,15 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/c++/11/memory \
   /usr/include/c++/11/mutex \
   /usr/include/c++/11/new \
+  /usr/include/c++/11/numeric \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/pstl/execution_defs.h \
   /usr/include/c++/11/pstl/glue_algorithm_defs.h \
   /usr/include/c++/11/pstl/glue_memory_defs.h \
+  /usr/include/c++/11/pstl/glue_numeric_defs.h \
   /usr/include/c++/11/pstl/pstl_config.h \
   /usr/include/c++/11/queue \
+  /usr/include/c++/11/random \
   /usr/include/c++/11/ratio \
   /usr/include/c++/11/sstream \
   /usr/include/c++/11/stdexcept \
@@ -346,10 +350,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
-  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h \
@@ -357,6 +359,7 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/gthr-default.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h \
+  /usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
@@ -375,6 +378,7 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
+  /usr/local/include/h3/h3api.h \
   /usr/local/include/osmium/builder/builder.hpp \
   /usr/local/include/osmium/builder/osm_object_builder.hpp \
   /usr/local/include/osmium/fwd.hpp \
@@ -472,6 +476,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/local/include/osmium/osm/timestamp.hpp:
 
+/usr/local/include/osmium/osm/tag.hpp:
+
 /usr/local/include/osmium/osm/object.hpp:
 
 /usr/local/include/osmium/osm/entity_bits.hpp:
@@ -546,15 +552,11 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
 
-/usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h:
-
 /usr/local/include/osmium/util/options.hpp:
 
 /usr/local/include/osmium/io/detail/pbf.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h:
 
 /usr/local/include/osmium/osm/area.hpp:
 
@@ -610,6 +612,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
+/usr/local/include/h3/h3api.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
 /usr/local/include/osmium/io/detail/queue_util.hpp:
@@ -627,10 +631,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/local/include/osmium/osm/changeset.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
@@ -660,10 +660,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h:
 
-/usr/local/include/osmium/io/any_input.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
-
 /usr/include/x86_64-linux-gnu/bits/sigcontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigaction.h:
@@ -689,6 +685,10 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /usr/include/c++/11/cstdlib:
 
@@ -740,6 +740,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/backward/auto_ptr.h:
 
+/usr/include/c++/11/bits/stl_numeric.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
@@ -773,6 +775,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/c++/11/new:
 
 /usr/include/c++/11/bits/sstream.tcc:
+
+/usr/include/c++/11/numeric:
 
 /usr/include/x86_64-linux-gnu/bits/sigstack.h:
 
@@ -810,8 +814,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/bits/ostream_insert.h:
 
-/usr/include/c++/11/cwchar:
-
 /usr/include/c++/11/map:
 
 /usr/include/c++/11/bits/uses_allocator.h:
@@ -823,18 +825,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/ctype.h:
 
 /usr/include/c++/11/bits/nested_exception.h:
-
-/usr/include/c++/11/bits/localefwd.h:
-
-/usr/include/c++/11/tr1/hypergeometric.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
-
-/usr/include/protozero/varint.hpp:
-
-/usr/include/asm-generic/errno.h:
-
-/usr/include/c++/11/tr1/ell_integral.tcc:
 
 /usr/local/include/osmium/io/detail/string_util.hpp:
 
@@ -864,6 +854,12 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/array:
 
+/usr/include/x86_64-linux-gnu/sys/wait.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/c++/11/bits/char_traits.h:
+
 /home/collin/programming/flux/routing/include/astar.h:
 
 /usr/include/c++/11/tr1/modified_bessel_func.tcc:
@@ -882,9 +878,21 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/cstdint:
 
-/home/collin/programming/flux/routing/src/main.cpp:
-
 /usr/include/stdlib.h:
+
+/usr/local/include/osmium/io/any_input.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
+
+/home/collin/programming/flux/routing/include/matching.h:
+
+/usr/include/c++/11/bits/locale_classes.tcc:
+
+/usr/include/c++/11/bits/node_handle.h:
+
+/usr/include/c++/11/iostream:
+
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
 /usr/include/c++/11/bits/vector.tcc:
 
@@ -936,11 +944,13 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/bzlib.h:
 
-/usr/include/x86_64-linux-gnu/sys/wait.h:
+/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
 
-/usr/include/asm-generic/errno-base.h:
+/usr/include/protozero/varint.hpp:
 
-/usr/include/c++/11/bits/char_traits.h:
+/usr/include/asm-generic/errno.h:
+
+/usr/include/c++/11/tr1/ell_integral.tcc:
 
 /usr/include/c++/11/bits/invoke.h:
 
@@ -958,16 +968,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/protozero/data_view.hpp:
 
-/usr/include/c++/11/bits/locale_classes.tcc:
-
-/usr/include/c++/11/bits/node_handle.h:
-
-/usr/include/c++/11/iostream:
-
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
-
-/usr/include/c++/11/bits/fstream.tcc:
-
 /usr/include/asm-generic/posix_types.h:
 
 /usr/include/c++/11/bits/alloc_traits.h:
@@ -978,21 +978,29 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/bits/unordered_map.h:
 
+/usr/local/include/osmium/osm/changeset.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/c++/11/bits/random.tcc:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h:
+
 /usr/include/c++/11/bits/enable_special_members.h:
 
 /usr/include/c++/11/bits/basic_ios.tcc:
 
-/usr/include/c++/11/bits/codecvt.h:
-
-/usr/include/c++/11/ctime:
-
-/usr/include/protozero/pbf_message.hpp:
+/usr/include/c++/11/cwchar:
 
 /usr/include/c++/11/bits/basic_string.tcc:
 
 /usr/include/c++/11/bits/charconv.h:
 
 /usr/include/c++/11/bits/functional_hash.h:
+
+/usr/include/c++/11/bits/localefwd.h:
+
+/usr/include/c++/11/tr1/hypergeometric.tcc:
 
 /usr/local/include/osmium/memory/item_iterator.hpp:
 
@@ -1004,15 +1012,19 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
-/usr/include/asm-generic/bitsperlong.h:
-
 /usr/include/asm-generic/types.h:
+
+/usr/include/asm-generic/bitsperlong.h:
 
 /usr/include/c++/11/bits/concept_check.h:
 
 /usr/include/c++/11/bits/stl_map.h:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
+
+/home/collin/programming/flux/routing/src/main.cpp:
+
+/usr/include/c++/11/bits/random.h:
 
 /usr/include/c++/11/bits/cxxabi_forced.h:
 
@@ -1021,10 +1033,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
 /usr/include/c++/11/ext/alloc_traits.h:
-
-/usr/local/include/osmium/osm/tag.hpp:
-
-/usr/include/c++/11/fstream:
 
 /usr/include/c++/11/bits/std_abs.h:
 
@@ -1058,6 +1066,10 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/c++/11/bits/exception.h:
 
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/c++/11/pstl/glue_numeric_defs.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/c++/11/bits/this_thread_sleep.h:
@@ -1087,6 +1099,10 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
 /usr/include/c++/11/tr1/gamma.tcc:
+
+/usr/include/c++/11/ctime:
+
+/usr/include/protozero/pbf_message.hpp:
 
 /usr/local/include/osmium/io/detail/opl_parser_functions.hpp:
 
@@ -1150,6 +1166,8 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/signal.h:
 
+/usr/include/c++/11/random:
+
 /usr/include/c++/11/sstream:
 
 /usr/include/c++/11/stdlib.h:
@@ -1157,6 +1175,16 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
 /usr/include/c++/11/string:
+
+/usr/local/include/osmium/io/pbf.hpp:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
+
+/usr/include/c++/11/string_view:
 
 /usr/include/c++/11/condition_variable:
 
@@ -1254,8 +1282,6 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 
 /usr/include/protozero/buffer_tmpl.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-
 /usr/local/include/osmium/io/o5m_input.hpp:
 
 /usr/local/include/osmium/io/detail/pbf_input_format.hpp:
@@ -1323,17 +1349,3 @@ CMakeFiles/routing_cli.dir/src/main.cpp.o: /home/collin/programming/flux/routing
 /usr/include/time.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
-/usr/local/include/osmium/io/pbf.hpp:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
-
-/usr/include/c++/11/string_view:
-
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:

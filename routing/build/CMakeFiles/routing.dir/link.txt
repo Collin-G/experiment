@@ -1,1 +1,2 @@
-/usr/bin/c++ -fPIC -shared -Wl,-soname,librouting.so -o librouting.so CMakeFiles/routing.dir/src/graph.cpp.o CMakeFiles/routing.dir/src/osm_parser.cpp.o CMakeFiles/routing.dir/src/graphbuilder.cpp.o CMakeFiles/routing.dir/src/astar.cpp.o CMakeFiles/routing.dir/src/router.cpp.o CMakeFiles/routing.dir/src/router_api.cpp.o  -lbz2 -lboost_system -lboost_iostreams -lboost_date_time -lz -lexpat
+/usr/bin/ar qc librouting.a CMakeFiles/routing.dir/src/graph.cpp.o CMakeFiles/routing.dir/src/osm_parser.cpp.o CMakeFiles/routing.dir/src/graphbuilder.cpp.o CMakeFiles/routing.dir/src/astar.cpp.o CMakeFiles/routing.dir/src/router.cpp.o CMakeFiles/routing.dir/src/router_api.cpp.o CMakeFiles/routing.dir/src/matching.cpp.o
+/usr/bin/ranlib librouting.a
