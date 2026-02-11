@@ -2,7 +2,7 @@
 #include "graphbuilder.h"
 #include "astar.h"
 #include "router.h"
-#include "matching.h"  // Include your matching engine
+#include "matching.h"
 #include <osmium/io/any_input.hpp>
 #include <osmium/visitor.hpp>
 #include <iostream>
@@ -11,146 +11,234 @@
 #include <chrono>
 #include <random>
 
+void basic_routing_test(RoutingEngine& routing_engine) {
+    std::cout << "\n=== Basic Routing Test ===\n";
+    
+    // Test route calculation
+    double lat1 = 43.69;
+    double lon1 = -79.32;
+    double lat2 = 43.6845;
+    double lon2 = -79.339;
+    
+    double distance = routing_engine.route(lat1, lon1, lat2, lon2);
+    std::cout << "Route from (" << lat1 << ", " << lon1 << ") to ("
+              << lat2 << ", " << lon2 << "): " << distance << " meters\n";
+    
+    // Test edge update
+    double middle_lat = (43.692 + 43.6896) / 2;
+    double middle_lon = (-79.322 - 79.3221) / 2;
+    
+    double original_distance = distance;
+    routing_engine.update_edge(middle_lat, middle_lon, 999, Direction::BOTH);
+    
+    distance = routing_engine.route(lat1, lon1, lat2, lon2);
+    std::cout << "After blocking middle edge: " << distance << " meters\n";
+    
+    if (distance > original_distance) {
+        std::cout << "✓ Routing engine successfully reroutes around blocked edge\n";
+    }
+}
+
 void test_matching_engine(RoutingEngine& routing_engine) {
     std::cout << "\n=== Testing Matching Engine ===\n";
     
-    // Create matching engine with routing engine
-    MatchingEngine engine(&routing_engine, 4);  // 4 worker threads
+    // Create matching engine (constructor only takes router now)
+    MatchingEngine engine(&routing_engine);
     
-    // Start the engine
-    engine.start();
+    // Start the engine with 4 threads
+    engine.start(4);
     
-    // Add some test drivers
-    std::cout << "\nAdding drivers...\n";
-    engine.add_driver(1, 10.0, 43.69, -79.32);    // Driver 1: ask $10
-    engine.add_driver(2, 15.0, 43.685, -79.33);   // Driver 2: ask $15
-    engine.add_driver(3, 8.0, 43.688, -79.325);   // Driver 3: ask $8
-    engine.add_driver(4, 12.0, 43.683, -79.335);  // Driver 4: ask $12
-    engine.add_driver(5, 20.0, 43.695, -79.31);   // Driver 5: ask $20 (far away)
+    // Give it a moment to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     
-    // Wait a bit for drivers to be processed
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    
-    // Add test riders
-    std::cout << "\nAdding riders...\n";
-    engine.add_rider(101, 25.0, 43.69, -79.32);   // Rider 1: bid $25
-    engine.add_rider(102, 12.0, 43.684, -79.33);  // Rider 2: bid $12
-    engine.add_rider(103, 18.0, 43.686, -79.327); // Rider 3: bid $18
-    
-    // Wait for matching to happen
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    
-    // Test driver accepting offers
-    std::cout << "\nTesting driver acceptances...\n";
-    
-    // Driver 1 accepts rider 101 (should match)
-    std::cout << "Driver 1 accepting Rider 101...\n";
-    engine.driver_accept(1, 101);
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    
-    // Driver 2 accepts rider 102 (should match)
-    std::cout << "Driver 2 accepting Rider 102...\n";
-    engine.driver_accept(2, 102);
-    
-    // Test cancellation
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::cout << "\nCancelling Driver 3...\n";
-    engine.driver_cancel(3);
-    
-    // Add more riders to test timeout
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::cout << "\nAdding rider that will timeout...\n";
-    engine.add_rider(104, 30.0, 43.692, -79.322); // Rider 4: bid $30
-    
-    // Wait for timeout (should be 5 minutes = 300 seconds)
-    std::cout << "Waiting 6 seconds (in real system would be 300s for timeout)...\n";
-    std::this_thread::sleep_for(std::chrono::seconds(6));
-    
-    // Add more dynamic test
-    std::cout << "\n=== Dynamic Test ===\n";
-    
-    // Add drivers in different price ranges
-    engine.add_driver(6, 5.0, 43.69, -79.32);    // Cheap driver
-    engine.add_driver(7, 30.0, 43.685, -79.33);  // Expensive driver
-    
-    // Add riders with different bids
-    engine.add_rider(105, 8.0, 43.691, -79.321);   // Low bid
-    engine.add_rider(106, 25.0, 43.689, -79.323);  // Medium bid
-    engine.add_rider(107, 35.0, 43.687, -79.325);  // High bid
-    
-    // Wait and test acceptances
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    
-    std::cout << "\nDriver 6 accepting Rider 105...\n";
-    engine.driver_accept(6, 105);  // Should match (bid $8 > ask $5)
-    
-    std::cout << "Driver 7 accepting Rider 106...\n";
-    engine.driver_accept(7, 106);  // Should NOT match (bid $25 < ask $30)
-    
-    // Wait a bit to see if timeout catches unmatched riders
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    
-    // Stop the engine
-    std::cout << "\nStopping matching engine...\n";
-    engine.stop();
-    
-    std::cout << "\n=== Test Complete ===\n";
-}
-
-void run_performance_test(RoutingEngine& routing_engine) {
-    std::cout << "\n=== Performance Test ===\n";
-    
-    MatchingEngine engine(&routing_engine, 8);  // 8 worker threads for stress test
-    
-    engine.start();
-    
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> lat_dist(43.68, 43.70);
-    std::uniform_real_distribution<> lon_dist(-79.34, -79.32);
-    std::uniform_real_distribution<> price_dist(5.0, 50.0);
-    
-    const int NUM_DRIVERS = 100;
-    const int NUM_RIDERS = 50;
-    
-    std::cout << "Adding " << NUM_DRIVERS << " drivers...\n";
-    for (int i = 1; i <= NUM_DRIVERS; i++) {
-        engine.add_driver(i, price_dist(gen), lat_dist(gen), lon_dist(gen));
-    }
+    std::cout << "\n--- Adding Drivers ---\n";
+    engine.add_driver(1, 10.0, 43.69, -79.32);    // $10 ask
+    engine.add_driver(2, 15.0, 43.685, -79.33);   // $15 ask  
+    engine.add_driver(3, 8.0, 43.688, -79.325);   // $8 ask (cheapest)
+    engine.add_driver(4, 12.0, 43.683, -79.335);  // $12 ask
+    engine.add_driver(5, 25.0, 43.695, -79.31);   // $25 ask (expensive)
     
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     
-    std::cout << "Adding " << NUM_RIDERS << " riders...\n";
-    for (int i = 101; i <= 100 + NUM_RIDERS; i++) {
-        engine.add_rider(i, price_dist(gen), lat_dist(gen), lon_dist(gen));
-    }
+    std::cout << "\n--- Adding Riders ---\n";
+    engine.add_rider(101, 30.0, 43.69, -79.32);   // $30 bid (can afford all)
+    engine.add_rider(102, 12.0, 43.684, -79.33);  // $12 bid (can afford drivers 1,3)
+    engine.add_rider(103, 5.0, 43.686, -79.327);  // $5 bid (too low for anyone)
     
-    std::cout << "Simulating matches...\n";
+    std::cout << "\n--- Checking State After 1 Second ---\n";
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    engine.print_state();
     
-    // Simulate some driver acceptances
-    for (int i = 1; i <= std::min(20, NUM_RIDERS); i++) {
-        if (i <= NUM_DRIVERS) {
-            engine.driver_accept(i, 100 + i);
-        }
-    }
+    std::cout << "\n--- Testing Acceptances ---\n";
     
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    // Test 1: Driver 3 accepts rider 101 (should match: $8 <= $30)
+    std::cout << "1. Driver 3 accepting Rider 101...\n";
+    engine.driver_accept(3, 101);
     
-    std::cout << "Stopping performance test...\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    engine.print_state();
+    
+    // Test 2: Driver 1 accepts rider 102 (should match: $10 <= $12)
+    std::cout << "\n2. Driver 1 accepting Rider 102...\n";
+    engine.driver_accept(1, 102);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    engine.print_state();
+    
+    // Test 3: Driver 2 tries rider 103 (should fail: $15 > $5)
+    std::cout << "\n3. Driver 2 attempting Rider 103...\n";
+    engine.driver_accept(2, 103);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    engine.print_state();
+    
+    std::cout << "\n--- Testing Cancellations ---\n";
+    std::cout << "Cancelling Driver 4...\n";
+    engine.driver_cancel(4);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    engine.print_state();
+    
+    std::cout << "\n--- Testing Timeout (simulated) ---\n";
+    std::cout << "Adding rider that should timeout...\n";
+    engine.add_rider(104, 20.0, 43.692, -79.322);
+    
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    engine.print_state();
+    
+    // In real system, timeout is 5 minutes (300 seconds)
+    // For testing, we can simulate shorter timeout by modifying TIMEOUT_SEC
+    // or just show the concept
+    
+    std::cout << "\n--- Dynamic Test: Price Matching ---\n";
+    
+    engine.add_driver(6, 7.0, 43.691, -79.321);   // $7 ask
+    engine.add_driver(7, 40.0, 43.689, -79.323);  // $40 ask (very expensive)
+    
+    engine.add_rider(105, 10.0, 43.690, -79.322);  // $10 bid
+    engine.add_rider(106, 50.0, 43.688, -79.324);  // $50 bid
+    
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    engine.print_state();
+    
+    std::cout << "\nDriver 6 accepting Rider 105...\n";
+    engine.driver_accept(6, 105);  // Should match ($7 <= $10)
+    
+    std::cout << "\nDriver 7 accepting Rider 105...\n";
+    engine.driver_accept(7, 105);  // Should fail ($40 > $10) - rider already matched anyway
+    
+    std::cout << "\nDriver 7 accepting Rider 106...\n";
+    engine.driver_accept(7, 106);  // Should match ($40 <= $50)
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    engine.print_state();
+    
+    std::cout << "\n--- Final Cleanup ---\n";
     engine.stop();
+    
+    std::cout << "\n=== Matching Engine Test Complete ===\n";
+}
+
+void interactive_test(RoutingEngine& routing_engine) {
+    std::cout << "\n=== Interactive Matching Engine Test ===\n";
+    std::cout << "Commands:\n";
+    std::cout << "  driver ID ASK LAT LON  - Add a driver\n";
+    std::cout << "  rider ID BID LAT LON   - Add a rider\n";
+    std::cout << "  accept DRIVER RIDER    - Driver accepts rider\n";
+    std::cout << "  cancel-driver ID       - Cancel driver\n";
+    std::cout << "  cancel-rider ID        - Cancel rider\n";
+    std::cout << "  state                  - Show current state\n";
+    std::cout << "  quit                   - Exit\n\n";
+    
+    MatchingEngine engine(&routing_engine);
+    engine.start(2);
+    
+    std::string command;
+    while (true) {
+        std::cout << "> ";
+        std::getline(std::cin, command);
+        
+        if (command.empty()) continue;
+        
+        std::istringstream iss(command);
+        std::string cmd;
+        iss >> cmd;
+        
+        if (cmd == "quit" || cmd == "exit") {
+            break;
+        }
+        else if (cmd == "driver") {
+            int id;
+            double ask, lat, lon;
+            if (iss >> id >> ask >> lat >> lon) {
+                engine.add_driver(id, ask, lat, lon);
+            } else {
+                std::cout << "Usage: driver ID ASK LAT LON\n";
+            }
+        }
+        else if (cmd == "rider") {
+            int id;
+            double bid, lat, lon;
+            if (iss >> id >> bid >> lat >> lon) {
+                engine.add_rider(id, bid, lat, lon);
+            } else {
+                std::cout << "Usage: rider ID BID LAT LON\n";
+            }
+        }
+        else if (cmd == "accept") {
+            int driver_id, rider_id;
+            if (iss >> driver_id >> rider_id) {
+                engine.driver_accept(driver_id, rider_id);
+            } else {
+                std::cout << "Usage: accept DRIVER_ID RIDER_ID\n";
+            }
+        }
+        else if (cmd == "cancel-driver") {
+            int id;
+            if (iss >> id) {
+                engine.driver_cancel(id);
+            }
+        }
+        else if (cmd == "cancel-rider") {
+            int id;
+            if (iss >> id) {
+                engine.rider_cancel(id);
+            }
+        }
+        else if (cmd == "state") {
+            engine.print_state();
+        }
+        else if (cmd == "help") {
+            std::cout << "Commands: driver, rider, accept, cancel-driver, cancel-rider, state, quit\n";
+        }
+        else {
+            std::cout << "Unknown command. Type 'help' for commands.\n";
+        }
+        
+        // Small delay to let processing happen
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+    
+    engine.stop();
+    std::cout << "Interactive test complete.\n";
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <osm_file.osm.pbf>\n";
+        std::cerr << "Usage: " << argv[0] << " <osm_file.osm.pbf> [interactive|performance]\n";
+        std::cerr << "Examples:\n";
+        std::cerr << "  " << argv[0] << " toronto.osm.pbf           # Basic test\n";
+        std::cerr << "  " << argv[0] << " toronto.osm.pbf interactive # Interactive mode\n";
+        std::cerr << "  " << argv[0] << " toronto.osm.pbf performance # Performance test\n";
         return 1;
     }
     
     std::string osm_file = argv[1];
     
     try {
-        // 1. Read OSM file
+        // 1. Load OSM data
+        std::cout << "Loading OSM data from " << osm_file << "...\n";
+        
         OSMHandler handler;
         osmium::io::Reader reader(osm_file);
         osmium::apply(reader, handler);
@@ -159,42 +247,65 @@ int main(int argc, char* argv[]) {
         std::cout << "Loaded " << handler.nodes.size() << " nodes and " 
                   << handler.ways.size() << " ways.\n";
         
-        // 2. Build the graph
+        // 2. Build graph
         GraphBuilder builder(std::move(handler.nodes), std::move(handler.ways));
         Graph graph = builder.build_graph();
         
-        std::cout << "Graph has " << graph.nodes().size() << " nodes.\n";
+        std::cout << "Built graph with " << graph.nodes().size() << " nodes.\n";
         
-        // 3. Test basic A* routing
-        std::cout << "\n=== Testing Basic Routing ===\n";
-        if (graph.nodes().size() >= 2) {
-            AStar astar;
-            int start_idx = 0;
-            int goal_idx = graph.nodes().size() - 1;
-            
-            auto result = astar.shortest_path(graph, start_idx, goal_idx);
-            std::cout << "A* test path distance: " << result.total_cost << "\n";
-        }
-        
-        // 4. Create routing engine
+        // 3. Create routing engine
         RoutingEngine routing_engine(graph);
+        std::cout << "Routing engine created.\n";
         
-        // 5. Test routing engine
-        std::cout << "\n=== Testing Routing Engine ===\n";
-        double lat1 = 43.69;
-        double lon1 = -79.32;
-        double lat2 = 43.6845;
-        double lon2 = -79.339;
+        // 4. Test basic routing
+        basic_routing_test(routing_engine);
         
-        double distance = routing_engine.route(lat1, lon1, lat2, lon2);
-        std::cout << "Route distance: " << distance << " meters\n";
+        // 5. Run tests based on command line argument
+        std::string mode = (argc > 2) ? argv[2] : "basic";
         
-        // 6. Test matching engine with routing
-        test_matching_engine(routing_engine);
-        
-        // 7. Optional: Performance test
-        if (argc > 2 && std::string(argv[2]) == "--performance") {
-            run_performance_test(routing_engine);
+        if (mode == "interactive") {
+            interactive_test(routing_engine);
+        }
+        else if (mode == "performance") {
+            // Simple performance test
+            std::cout << "\n=== Performance Test ===\n";
+            
+            MatchingEngine engine(&routing_engine);
+            engine.start(8);  // Use 8 threads for performance
+            
+            auto start_time = std::chrono::steady_clock::now();
+            
+            // Add 100 drivers
+            for (int i = 1; i <= 100; i++) {
+                engine.add_driver(i, 10.0 + (i % 20), 
+                                43.68 + (i % 100) * 0.0002, 
+                                -79.33 + (i % 100) * 0.0002);
+            }
+            
+            // Add 50 riders
+            for (int i = 101; i <= 150; i++) {
+                engine.add_rider(i, 20.0 + (i % 15),
+                               43.68 + (i % 100) * 0.0002,
+                               -79.33 + (i % 100) * 0.0002);
+            }
+            
+            // Simulate some matches
+            for (int i = 1; i <= 20; i++) {
+                if (i <= 100) {  // Ensure driver exists
+                    engine.driver_accept(i, 100 + (i % 50 + 1));
+                }
+            }
+            
+            auto end_time = std::chrono::steady_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+            
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            engine.stop();
+            
+            std::cout << "Performance test completed in " << duration.count() << "ms\n";
+        }
+        else {  // basic mode (default)
+            test_matching_engine(routing_engine);
         }
         
     } catch (const std::exception& e) {

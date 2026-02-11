@@ -21,13 +21,9 @@ struct Location {
     Location(double lat_ = 0, double lon_ = 0) : lat(lat_), lon(lon_) {}
 };
 
-// Convert to H3 LatLng
-inline LatLng toLatLng(const Location& loc) {
-    return {loc.lat, loc.lon};
-}
-
 enum class State { OPEN, MATCHED, CANCELLED, TIMEOUT };
 
+// Use shared_ptr for automatic memory management
 struct Rider {
     int id;
     double bid;
@@ -35,8 +31,6 @@ struct Rider {
     std::atomic<State> state{State::OPEN};
     std::chrono::steady_clock::time_point post_time;
     std::vector<int> pending_drivers;
-    bool processed{false};
-    std::condition_variable processed_cv;
     
     Rider(int id_ = 0, double bid_ = 0, Location loc_ = Location()) 
         : id(id_), bid(bid_), loc(loc_) {}
@@ -48,7 +42,6 @@ struct Driver {
     Location loc;
     std::atomic<State> state{State::OPEN};
     std::vector<int> inbox;
-    std::mutex inbox_mutex;
     
     Driver(int id_ = 0, double ask_ = 0, Location loc_ = Location())
         : id(id_), ask(ask_), loc(loc_) {}
@@ -56,11 +49,11 @@ struct Driver {
 
 class MatchingEngine {
 public:
-    MatchingEngine(RoutingEngine* router = nullptr, int num_threads = 4);
+    MatchingEngine(RoutingEngine* router = nullptr);
     ~MatchingEngine();
     
     // Public API
-    void start();
+    void start(int num_threads = 4);
     void stop();
     
     void add_rider(int id, double bid, double lat, double lon);
@@ -69,12 +62,11 @@ public:
     void driver_cancel(int driver_id);
     void rider_cancel(int rider_id);
     
-    // Debug/Test helpers
-    void debug_print_state();
-    void wait_for_rider_processed(int rider_id, int timeout_ms = 1000);
+    // Debug
+    void print_state() const;
     
 private:
-    // Worker threads
+    // Worker thread
     void matching_worker();
     void timeout_worker();
     
@@ -82,7 +74,6 @@ private:
     std::vector<int> find_k_closest_drivers(const Rider& rider, int k);
     void send_offers(int rider_id, const std::vector<int>& driver_ids);
     void cleanup_after_match(int rider_id, int driver_id);
-    void mark_rider_processed(int rider_id);
     
     // H3 functions
     H3Index location_to_h3(const Location& loc, int res);
@@ -99,14 +90,13 @@ private:
     std::thread timeout_thread_;
     std::atomic<bool> running_{false};
     
-    // Synchronization
-    std::mutex riders_mutex_;
-    std::mutex drivers_mutex_;
-    std::mutex cells_mutex_;
-    std::mutex queue_mutex_;
+    // Single mutex for all data - prevents deadlocks
+    mutable std::mutex data_mutex_;
     
-    // Queues
+    // Queue for rider processing
     std::queue<int> pending_riders_;
+    std::mutex queue_mutex_;
+    std::condition_variable queue_cv_;
     
     // External
     RoutingEngine* router_;
@@ -115,5 +105,4 @@ private:
     static constexpr int H3_RES = 10;
     static constexpr int K = 5;
     static constexpr int TIMEOUT_SEC = 300;
-    int num_threads_;
 };
