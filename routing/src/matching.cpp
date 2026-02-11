@@ -14,14 +14,14 @@ MatchingEngine::~MatchingEngine() {
 }
 
 // H3 helper functions
-H3Index MatchingEngine::location_to_h3(const Location& loc, int res) {
+H3Index MatchingEngine::location_to_h3(const Location& loc, int res) const {
     LatLng coord = {loc.lat, loc.lon};
     H3Index cell;
     latLngToCell(&coord, res, &cell);
     return cell;
 }
 
-std::vector<H3Index> MatchingEngine::get_neighboring_cells(H3Index center, int radius) {
+std::vector<H3Index> MatchingEngine::get_neighboring_cells(H3Index center, int radius) const {
     int64_t max_neighbors;
     maxGridDiskSize(radius, &max_neighbors);
     std::vector<H3Index> neighbors(max_neighbors);
@@ -29,7 +29,7 @@ std::vector<H3Index> MatchingEngine::get_neighboring_cells(H3Index center, int r
     return neighbors;
 }
 
-double MatchingEngine::calculate_distance(const Location& a, const Location& b) {
+double MatchingEngine::calculate_distance(const Location& a, const Location& b) const {
     if (router_) {
         return router_->route(a.lat, a.lon, b.lat, b.lon);
     } else {
@@ -49,8 +49,9 @@ double MatchingEngine::calculate_distance(const Location& a, const Location& b) 
     }
 }
 
-// Public API
+// Public API - OPTIMIZED: Minimal locking time
 void MatchingEngine::add_rider(int id, double bid, double lat, double lon) {
+    // 1. FAST: Add rider to map (brief lock)
     {
         std::lock_guard<std::mutex> lock(data_mutex_);
         
@@ -59,17 +60,19 @@ void MatchingEngine::add_rider(int id, double bid, double lat, double lon) {
             return;
         }
         
-        riders_.emplace(std::piecewise_construct,
-                std::forward_as_tuple(id),
-                std::forward_as_tuple(id, bid, Location(lat, lon)));
-        riders_[id].post_time = std::chrono::steady_clock::now();
-    }
+        Rider& rider = riders_[id];
+        rider.id = id;
+        rider.bid = bid;
+        rider.loc = Location(lat, lon);
+        rider.post_time = std::chrono::steady_clock::now();
+        rider.state = State::OPEN;
+    }  // data_mutex_ unlocked here
     
-    // Add to queue (separate lock for queue)
+    // 2. Queue for processing (separate lock)
     {
         std::lock_guard<std::mutex> lock(queue_mutex_);
         pending_riders_.push(id);
-        queue_cv_.notify_one();
+        queue_cv_.notify_one();  // Wake up a worker
     }
     
     std::cout << "Rider " << id << " added (bid: $" << bid << ")\n";
@@ -83,11 +86,14 @@ void MatchingEngine::add_driver(int id, double ask, double lat, double lon) {
         return;
     }
     
-    drivers_.emplace(std::piecewise_construct,
-                 std::forward_as_tuple(id),
-                 std::forward_as_tuple(id, ask, Location(lat, lon)));
+    Driver& driver = drivers_[id];
+    driver.id = id;
+    driver.ask = ask;
+    driver.loc = Location(lat, lon);
+    driver.state = State::OPEN;
     
-    H3Index cell = location_to_h3(drivers_[id].loc, H3_RES);
+    // Add to H3 spatial index
+    H3Index cell = location_to_h3(driver.loc, H3_RES);
     drivers_by_cell_[cell].push_back(id);
     
     std::cout << "Driver " << id << " added (ask: $" << ask << ")\n";
@@ -119,13 +125,13 @@ void MatchingEngine::driver_accept(int driver_id, int rider_id) {
         return;
     }
     
-    // Check both are open
+    // Check both are still open
     if (driver.state != State::OPEN || rider.state != State::OPEN) {
         std::cout << "Cannot match - not both open\n";
         return;
     }
     
-    // Match them
+    // Match them!
     driver.state = State::MATCHED;
     rider.state = State::MATCHED;
     
@@ -174,12 +180,12 @@ void MatchingEngine::rider_cancel(int rider_id) {
     std::cout << "Rider " << rider_id << " cancelled\n";
 }
 
-// Matching worker
+// Matching worker - waits for riders to process
 void MatchingEngine::matching_worker() {
     while (running_) {
         int rider_id = -1;
         
-        // Wait for a rider
+        // Wait for a rider (efficient, sleeps when idle)
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
             queue_cv_.wait(lock, [this]() { 
@@ -190,9 +196,7 @@ void MatchingEngine::matching_worker() {
             
             rider_id = pending_riders_.front();
             pending_riders_.pop();
-        }
-        
-        if (rider_id == -1) continue;
+        }  // queue_mutex_ released
         
         // Process the rider (with data lock)
         std::lock_guard<std::mutex> lock(data_mutex_);
@@ -216,8 +220,7 @@ std::vector<int> MatchingEngine::find_k_closest_drivers(const Rider& rider, int 
     std::vector<std::pair<double, int>> candidates;
     
     H3Index rider_cell = location_to_h3(rider.loc, H3_RES);
-    std::vector<H3Index> neighboring_cells = get_neighboring_cells(rider_cell, 1);
-    
+    std::vector<H3Index> neighboring_cells = get_neighboring_cells(rider_cell, SEARCH_RADIUS);    
     for (H3Index cell : neighboring_cells) {
         auto cell_it = drivers_by_cell_.find(cell);
         if (cell_it == drivers_by_cell_.end()) continue;
@@ -254,6 +257,8 @@ void MatchingEngine::send_offers(int rider_id, const std::vector<int>& driver_id
         auto it = drivers_.find(driver_id);
         if (it == drivers_.end()) continue;
         it->second.inbox.push_back(rider_id);
+        std::cout << "DEBUG: Sent offer from rider " << rider_id 
+                  << " to driver " << driver_id << std::endl;  // Add this
     }
     
     // Update rider's pending drivers
@@ -297,7 +302,7 @@ void MatchingEngine::cleanup_after_match(int rider_id, int driver_id) {
     riders_.erase(rider_id);
 }
 
-// Timeout worker
+// Timeout worker - checks for expired riders
 void MatchingEngine::timeout_worker() {
     while (running_) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -367,7 +372,7 @@ void MatchingEngine::stop() {
     
     running_ = false;
     
-    // Wake up all workers
+    // Wake up all workers waiting on queue
     {
         std::lock_guard<std::mutex> lock(queue_mutex_);
         queue_cv_.notify_all();
