@@ -93,7 +93,9 @@ routing_cli_EXTERNAL_OBJECTS =
 routing_cli: CMakeFiles/routing_cli.dir/src/main.cpp.o
 routing_cli: CMakeFiles/routing_cli.dir/build.make
 routing_cli: librouting.a
+routing_cli: /usr/lib/x86_64-linux-gnu/libcurl.so
 routing_cli: /usr/local/lib/libh3.a
+routing_cli: /usr/lib/x86_64-linux-gnu/libcurl.so
 routing_cli: CMakeFiles/routing_cli.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable routing_cli"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/routing_cli.dir/link.txt --verbose=$(VERBOSE)

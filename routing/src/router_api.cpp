@@ -51,21 +51,43 @@ bool init_router(const char* osm_file) {
 
     std::call_once(init_flag, [&]() {
         try {
-            // 1. Parse OSM
-            OSMHandler handler;
-            osmium::io::Reader reader(osm_file);
-            osmium::apply(reader, handler);
-            reader.close();
 
-            if (handler.nodes.empty() || handler.ways.empty()) {
+            // --------------------------------------------------------
+            // PASS 1 — Collect relevant ways + required node IDs
+            // --------------------------------------------------------
+            WayCollector way_collector;
+            {
+                osmium::io::Reader reader(osm_file);
+                osmium::apply(reader, way_collector);
+                reader.close();
+            }
+
+            if (way_collector.relevant_ways.empty()) {
                 success = false;
                 return;
             }
 
-            // 2. Build graph
+            // --------------------------------------------------------
+            // PASS 2 — Load only required nodes
+            // --------------------------------------------------------
+            NodeCollector node_collector(way_collector.required_nodes);
+            {
+                osmium::io::Reader reader(osm_file);
+                osmium::apply(reader, node_collector);
+                reader.close();
+            }
+
+            if (node_collector.nodes.empty()) {
+                success = false;
+                return;
+            }
+
+            // --------------------------------------------------------
+            // Build Graph
+            // --------------------------------------------------------
             GraphBuilder builder(
-                std::move(handler.nodes),
-                std::move(handler.ways)
+                std::move(node_collector.nodes),
+                std::move(way_collector.relevant_ways)
             );
 
             Graph graph = builder.build_graph();
@@ -75,7 +97,9 @@ bool init_router(const char* osm_file) {
                 return;
             }
 
-            // 3. Create routing engine
+            // --------------------------------------------------------
+            // Create routing engine
+            // --------------------------------------------------------
             engine = std::make_unique<RoutingEngine>(std::move(graph));
         }
         catch (...) {
@@ -85,6 +109,7 @@ bool init_router(const char* osm_file) {
 
     return success && engine != nullptr;
 }
+
 
 double route_distance(double lat1, double lon1,
                       double lat2, double lon2) {

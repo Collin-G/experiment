@@ -8,17 +8,19 @@
 
 
 class GraphBuilder {
-    public:
-        GraphBuilder(std::unordered_map<int64_t, OSMNode>&& nodes, std::vector<OSMWay>&& ways) : nodes_(std::move(nodes)), ways_(std::move(ways)) {}
-        // static Graph build();
+public:
+    GraphBuilder(std::unordered_map<int64_t, OSMNode>&& nodes,
+                 std::vector<OSMWay>&& ways)
+        : nodes_(std::move(nodes)),
+          ways_(std::move(ways)) {}
 
-        std::unordered_map<int64_t, int> find_intersections();
-        double haversine(OSMNode& n1, OSMNode& n2);
-        Graph build_graph();  
-        bool is_endpoint(int node_id, OSMWay& way);
-        Graph filter_largest_connected_component(const Graph& original);
-    
-    private:
-        std::unordered_map<int64_t, OSMNode> nodes_;
-        std::vector<OSMWay> ways_;
-    };
+    std::unordered_map<int64_t, int> find_intersections();
+    double haversine(OSMNode& n1, OSMNode& n2);
+    Graph build_graph();
+    bool is_endpoint(int node_id, OSMWay& way);
+    Graph filter_largest_connected_component(const Graph& original);
+
+private:
+    std::unordered_map<int64_t, OSMNode> nodes_;
+    std::vector<OSMWay> ways_;
+};

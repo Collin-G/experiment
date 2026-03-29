@@ -1,62 +1,54 @@
 #include "graphbuilder.h"
-#include "osm_parser.h"
 #include "graph.h"
-
 #include <iostream>
-#include <cstdlib>
-#include <cmath>  // for sin, cos, atan2, sqrt
-
+#include <queue>
 #include <unordered_set>
+#include <cmath>
+#include <algorithm>
 
-std::unordered_map<int64_t, int> GraphBuilder::find_intersections(){
+// Helper to count directed edges using public Graph API
+size_t count_edges(const Graph& g) {
+    size_t total = 0;
+    for (size_t i = 0; i < g.nodes().size(); ++i) {
+        total += g.neighbors(i).size();
+    }
+    return total;
+}
+
+std::unordered_map<int64_t, int> GraphBuilder::find_intersections() {
     std::unordered_map<int64_t, int> table;
-    for (OSMWay& way : ways_){
-        for (int64_t node_id: way.node_ids){
+    for (const OSMWay& way : ways_) {
+        for (int64_t node_id : way.node_ids) {
             table[node_id]++;
         }
     }
-    
     return table;
 }
 
 double GraphBuilder::haversine(OSMNode& n1, OSMNode& n2) {
-    const double R = 6371000.0; // radius of Earth in meters
-
-    // Convert degrees to radians
+    const double R = 6371000.0;
     double lat1 = n1.lat * M_PI / 180.0;
     double lon1 = n1.lon * M_PI / 180.0;
     double lat2 = n2.lat * M_PI / 180.0;
     double lon2 = n2.lon * M_PI / 180.0;
-
     double dlat = lat2 - lat1;
     double dlon = lon2 - lon1;
-
     double a = std::sin(dlat / 2) * std::sin(dlat / 2) +
-               std::cos(lat1) * std::cos(lat2) *
-               std::sin(dlon / 2) * std::sin(dlon / 2);
-
+               std::cos(lat1) * std::cos(lat2) * std::sin(dlon / 2) * std::sin(dlon / 2);
     double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1 - a));
-
-    double distance = R * c;
-    return distance; // in meters
-
-
+    return R * c;
 }
 
-bool GraphBuilder::is_endpoint(int node_id, OSMWay& way){
-    return node_id ==  way.node_ids.front() || node_id == way.node_ids.back();   
+bool GraphBuilder::is_endpoint(int node_id, OSMWay& way) {
+    return node_id == way.node_ids.front() || node_id == way.node_ids.back();
 }
-
-
-
 
 Graph GraphBuilder::build_graph() {
-    Graph graph;
+    // ------------------------------------------------------------------
+    // STAGE 1: Count intersections and identify routing nodes
+    // ------------------------------------------------------------------
+    auto usage = find_intersections();
 
-    // 1. Count how many ways reference each node
-    std::unordered_map<int64_t, int> usage = find_intersections();
-
-    // 2. Identify routing nodes (endpoints or shared nodes)
     std::unordered_set<int64_t> routing_nodes;
     for (const auto& way : ways_) {
         if (!way.node_ids.empty()) {
@@ -65,22 +57,26 @@ Graph GraphBuilder::build_graph() {
         }
     }
     for (const auto& [node_id, count] : usage) {
-        if (count > 1) {
-            routing_nodes.insert(node_id);
-        }
+        if (count > 1) routing_nodes.insert(node_id);
     }
 
-    // 3. Assign graph indices
+    // ------------------------------------------------------------------
+    // STAGE 2: Assign graph indices (nodes must exist in nodes_ map)
+    // ------------------------------------------------------------------
     std::unordered_map<int64_t, int> id_to_index;
+    Graph graph;
     int idx = 0;
     for (int64_t node_id : routing_nodes) {
-        const OSMNode& osm = nodes_.at(node_id);
+        auto it = nodes_.find(node_id);
+        if (it == nodes_.end()) continue;
         id_to_index[node_id] = idx;
-        graph.add_node(idx, osm.lat, osm.lon);
+        graph.add_node(idx, it->second.lat, it->second.lon);
         idx++;
     }
 
-    // 4. Build edges
+    // ------------------------------------------------------------------
+    // STAGE 3: Build edges along ways between routing nodes
+    // ------------------------------------------------------------------
     for (const OSMWay& way : ways_) {
         if (way.node_ids.size() < 2) continue;
 
@@ -94,49 +90,64 @@ Graph GraphBuilder::build_graph() {
             int64_t prev_id = way.node_ids[i - 1];
             int64_t curr_id = way.node_ids[i];
 
-            // Always accumulate distance
-            auto& prev_node = nodes_.at(prev_id);
-            auto& curr_node = nodes_.at(curr_id);
-            acc_distance += haversine(prev_node, curr_node);
+            auto prev_it = nodes_.find(prev_id);
+            auto curr_it = nodes_.find(curr_id);
+            if (prev_it == nodes_.end() || curr_it == nodes_.end()) continue;
 
-            // If current node is a routing node, create an edge
+            acc_distance += haversine(prev_it->second, curr_it->second);
+
             if (routing_nodes.count(curr_id)) {
                 if (prev_routing_node != -1) {
                     double eta = acc_distance / speed_mps;
 
-                    int from = id_to_index.at(prev_routing_node);
-                    int to   = id_to_index.at(curr_id);
+                    auto from_it = id_to_index.find(prev_routing_node);
+                    auto to_it   = id_to_index.find(curr_id);
+                    if (from_it != id_to_index.end() && to_it != id_to_index.end()) {
+                        int from = from_it->second;
+                        int to   = to_it->second;
 
-                    if (way.oneway == OneWay::Forward) {
-                        graph.add_edge(way.id, from, to, eta);
-                    }
-                    else if (way.oneway == OneWay::Backward) {
-                        graph.add_edge(way.id, to, from, eta);
-                    }
-                    else {
-                        graph.add_edge(way.id, from, to, eta);
-                        graph.add_edge(way.id, to, from, eta);
+                        if (way.oneway == OneWay::Forward) {
+                            graph.add_edge(way.id, from, to, eta);
+                        } else if (way.oneway == OneWay::Backward) {
+                            graph.add_edge(way.id, to, from, eta);
+                        } else {
+                            graph.add_edge(way.id, from, to, eta);
+                            graph.add_edge(way.id, to, from, eta);
+                        }
                     }
                 }
-
-                // Reset for next segment
                 prev_routing_node = curr_id;
                 acc_distance = 0.0;
             }
         }
     }
 
-    graph = filter_largest_connected_component(graph);
+    // ------------------------------------------------------------------
+    // STAGE 4: Optional debug output (remove in production)
+    // ------------------------------------------------------------------
+    std::cout << "\n=== GRAPH BUILDER ===\n";
+    std::cout << "Raw graph nodes: " << graph.nodes().size() << "\n";
+    std::cout << "Raw graph edges: " << count_edges(graph) << "\n";
 
-    return graph;
+    // ------------------------------------------------------------------
+    // STAGE 5: Keep only the largest connected component
+    // ------------------------------------------------------------------
+    Graph filtered = filter_largest_connected_component(graph);
+    
+    std::cout << "Filtered graph nodes: " << filtered.nodes().size() << "\n";
+    std::cout << "Filtered graph edges: " << count_edges(filtered) << "\n";
+    std::cout << "========================\n";
+
+    return filtered;
 }
 
 Graph GraphBuilder::filter_largest_connected_component(const Graph& original) {
     int N = original.nodes().size();
-    std::vector<bool> visited(N, false);
-    std::vector<std::vector<int>> components;
+    if (N == 0) return Graph();
 
-    // 1. BFS to find components
+    std::vector<bool> visited(N, false);
+    std::vector<int> largest_component;
+
     for (int i = 0; i < N; ++i) {
         if (visited[i]) continue;
 
@@ -149,8 +160,7 @@ Graph GraphBuilder::filter_largest_connected_component(const Graph& original) {
             int curr = q.front(); q.pop();
             component.push_back(curr);
 
-            for (const auto& neighbor_pair : original.neighbors(curr)) {
-                int neighbor = neighbor_pair.first;
+            for (const auto& [neighbor, _] : original.neighbors(curr)) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
                     q.push(neighbor);
@@ -158,53 +168,36 @@ Graph GraphBuilder::filter_largest_connected_component(const Graph& original) {
             }
         }
 
-        components.push_back(component);
-    }
-
-    // 2. Keep largest component
-    size_t max_size = 0;
-    int main_idx = -1;
-    for (size_t i = 0; i < components.size(); ++i) {
-        if (components[i].size() > max_size) {
-            max_size = components[i].size();
-            main_idx = i;
+        if (component.size() > largest_component.size()) {
+            largest_component = std::move(component);
         }
     }
 
-    if (main_idx == -1) return Graph(); // empty graph
-
-    const auto& main_component = components[main_idx];
-    std::unordered_set<int> main_nodes(main_component.begin(), main_component.end());
-
-    // 3. Build filtered graph
-    Graph filtered_graph;
+    // Build filtered graph
+    Graph filtered;
     std::unordered_map<int, int> old_to_new;
-    int new_idx = 0;
+    old_to_new.reserve(largest_component.size());
 
-    for (int old_idx : main_component) {
+    int new_idx = 0;
+    for (int old_idx : largest_component) {
         old_to_new[old_idx] = new_idx;
-        filtered_graph.add_node(
-            new_idx,
-            original.get_node_lat(old_idx),
-            original.get_node_lon(old_idx)
-        );
+        filtered.add_node(new_idx,
+                          original.get_node_lat(old_idx),
+                          original.get_node_lon(old_idx));
         new_idx++;
     }
 
-    int edge_ind = 0;
-
-    for (int old_idx : main_component) {
+    int edge_id = 0;
+    for (int old_idx : largest_component) {
         int new_from = old_to_new[old_idx];
-        for (const auto& neighbor_pair : original.neighbors(old_idx)) {
-            int old_to = neighbor_pair.first;
-            double eta = neighbor_pair.second;
-            if (main_nodes.count(old_to)) {
-                int new_to = old_to_new[old_to];
-                filtered_graph.add_edge(edge_ind, new_from, new_to, eta);
-                edge_ind ++;
+
+        for (const auto& [old_to, eta] : original.neighbors(old_idx)) {
+            auto it = old_to_new.find(old_to);
+            if (it != old_to_new.end()) {
+                filtered.add_edge(edge_id++, new_from, it->second, eta);
             }
         }
     }
 
-    return filtered_graph;
+    return filtered;
 }

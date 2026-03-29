@@ -1,13 +1,18 @@
 #pragma once
 
 #include <osmium/handler.hpp>
-#include <osmium/io/any_input.hpp>
-#include <osmium/visitor.hpp>
+#include <osmium/osm/node.hpp>   // <-- REQUIRED
+#include <osmium/osm/way.hpp>    // <-- REQUIRED
+
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <string>
 
-// Struct to store node info
+// ----------------------------
+// Basic OSM Structures
+// ----------------------------
+
 struct OSMNode {
     int64_t id;
     double lat;
@@ -20,25 +25,38 @@ enum struct OneWay {
     Backward,
 };
 
-// Struct to store way info
 struct OSMWay {
     int64_t id;
-    std::vector<int64_t> node_ids;   // list of node IDs
-    std::string highway_type;        // e.g., "residential", "primary"
-    int maxspeed;                    // optional
-    OneWay oneway;
+    std::vector<int64_t> node_ids;
+    int maxspeed = 0;
+    OneWay oneway = OneWay::No;
 };
 
-// Handler class
-class OSMHandler : public osmium::handler::Handler {
+// ----------------------------
+// PASS 1 — Collect relevant ways + node IDs
+// ----------------------------
+
+class WayCollector : public osmium::handler::Handler {
 public:
-    // Maps to store nodes and ways
-    std::unordered_map<int64_t, OSMNode> nodes;
-    std::vector<OSMWay> ways;
+    std::unordered_set<int64_t> required_nodes;
+    std::vector<OSMWay> relevant_ways;
+    std::unordered_map<std::string, size_t> excluded_highway_counts;
+    size_t excluded_no_highway = 0;
 
-    // Called for each node in the OSM file
-    void node(const osmium::Node& n);
-
-    // Called for each way in the OSM file
     void way(const osmium::Way& w);
+    void print_stats() const;
+};
+
+// ----------------------------
+// PASS 2 — Collect only required nodes
+// ----------------------------
+
+class NodeCollector : public osmium::handler::Handler {
+public:
+    const std::unordered_set<int64_t>& required_nodes;
+    std::unordered_map<int64_t, OSMNode> nodes;
+
+    NodeCollector(const std::unordered_set<int64_t>& req);
+
+    void node(const osmium::Node& n);
 };

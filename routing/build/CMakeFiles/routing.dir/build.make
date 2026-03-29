@@ -153,19 +153,19 @@ CMakeFiles/routing.dir/src/router_api.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/routing.dir/src/router_api.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/routing/src/router_api.cpp -o CMakeFiles/routing.dir/src/router_api.cpp.s
 
-CMakeFiles/routing.dir/src/matching.cpp.o: CMakeFiles/routing.dir/flags.make
-CMakeFiles/routing.dir/src/matching.cpp.o: /home/collin/programming/flux/routing/src/matching.cpp
-CMakeFiles/routing.dir/src/matching.cpp.o: CMakeFiles/routing.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/routing.dir/src/matching.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/routing.dir/src/matching.cpp.o -MF CMakeFiles/routing.dir/src/matching.cpp.o.d -o CMakeFiles/routing.dir/src/matching.cpp.o -c /home/collin/programming/flux/routing/src/matching.cpp
+CMakeFiles/routing.dir/src/matching_engine.cpp.o: CMakeFiles/routing.dir/flags.make
+CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/routing/src/matching_engine.cpp
+CMakeFiles/routing.dir/src/matching_engine.cpp.o: CMakeFiles/routing.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/routing.dir/src/matching_engine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/routing.dir/src/matching_engine.cpp.o -MF CMakeFiles/routing.dir/src/matching_engine.cpp.o.d -o CMakeFiles/routing.dir/src/matching_engine.cpp.o -c /home/collin/programming/flux/routing/src/matching_engine.cpp
 
-CMakeFiles/routing.dir/src/matching.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/routing.dir/src/matching.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/routing/src/matching.cpp > CMakeFiles/routing.dir/src/matching.cpp.i
+CMakeFiles/routing.dir/src/matching_engine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/routing.dir/src/matching_engine.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/routing/src/matching_engine.cpp > CMakeFiles/routing.dir/src/matching_engine.cpp.i
 
-CMakeFiles/routing.dir/src/matching.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/routing.dir/src/matching.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/routing/src/matching.cpp -o CMakeFiles/routing.dir/src/matching.cpp.s
+CMakeFiles/routing.dir/src/matching_engine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/routing.dir/src/matching_engine.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/routing/src/matching_engine.cpp -o CMakeFiles/routing.dir/src/matching_engine.cpp.s
 
 # Object files for target routing
 routing_OBJECTS = \
@@ -175,7 +175,7 @@ routing_OBJECTS = \
 "CMakeFiles/routing.dir/src/astar.cpp.o" \
 "CMakeFiles/routing.dir/src/router.cpp.o" \
 "CMakeFiles/routing.dir/src/router_api.cpp.o" \
-"CMakeFiles/routing.dir/src/matching.cpp.o"
+"CMakeFiles/routing.dir/src/matching_engine.cpp.o"
 
 # External object files for target routing
 routing_EXTERNAL_OBJECTS =
@@ -186,7 +186,7 @@ librouting.a: CMakeFiles/routing.dir/src/graphbuilder.cpp.o
 librouting.a: CMakeFiles/routing.dir/src/astar.cpp.o
 librouting.a: CMakeFiles/routing.dir/src/router.cpp.o
 librouting.a: CMakeFiles/routing.dir/src/router_api.cpp.o
-librouting.a: CMakeFiles/routing.dir/src/matching.cpp.o
+librouting.a: CMakeFiles/routing.dir/src/matching_engine.cpp.o
 librouting.a: CMakeFiles/routing.dir/build.make
 librouting.a: CMakeFiles/routing.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library librouting.a"
