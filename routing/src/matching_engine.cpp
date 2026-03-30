@@ -32,103 +32,88 @@ std::unordered_map<int, Location> MatchingEngine::get_id_location_map(Location l
 
 }
 
-void MatchingEngine::add_rider(int id, double bid, double lat, double lon) {
+void MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
     Location loc = Location(lat, lon);
-    Rider rider = Rider(id,  bid, loc);
+    Rider rider = Rider(ext_id,  bid, loc);
 
-
-
-    std::unordered_map<int, Location> id_loc_map = get_id_location_map(loc, drivers_by_cell_, drivers_);
-
-    
+    std::unordered_map<int, Location> id_loc_map = get_id_location_map(loc, drivers_by_cell_, drivers_);    
     std::vector<int> closest_drivers = find_top_k(loc, id_loc_map, K);
 
-    for (auto driver_id : closest_drivers){
-        auto iter = drivers_.find(driver_id);
-        if (iter != drivers_.end()){
-            Driver &driver = iter->second;
-            driver.inbox.emplace(id, std::make_pair(bid, std::nullopt));
-            rider.inbox.emplace(driver_id, std::nullopt);
+    int int_rider_id = riders_.allocate(rider);
 
-        }
+    for (auto int_driver_id : closest_drivers){
+        Driver &driver = drivers_[int_driver_id];
+        driver.inbox.emplace(int_rider_id, std::make_pair(bid, std::nullopt));
+        rider.inbox.emplace(int_driver_id, std::nullopt);
+
     }
 
     H3Index cell = location_to_h3(loc, H3_RES);
     auto& lst = riders_by_cell_[cell];
-    if (std::find(lst.begin(), lst.end(), id) == lst.end()) lst.push_back(id);
-
-    
-
-    riders_.emplace(id, rider);
+    if (std::find(lst.begin(), lst.end(), ext_id) == lst.end()) lst.push_back(int_rider_id);
 
 }
 
 
-void MatchingEngine::add_driver(int id, double lat, double lon){
+void MatchingEngine::add_driver(int ext_driver_id, double lat, double lon){
     Location loc = Location(lat, lon);
-    Driver driver = Driver(id, loc);
+    Driver driver = Driver(ext_driver_id, loc);
 
     std::unordered_map<int, Location> id_loc_map = get_id_location_map(loc, riders_by_cell_, riders_);
     std::vector<int> closest_riders = find_top_k(loc, id_loc_map, K);
 
-    for (auto rider_id: closest_riders){
-        auto iter = riders_.find(rider_id);
-        if (iter != riders_.end()){
-            Rider &rider = iter->second;
-            driver.inbox.emplace(rider_id, std::make_pair(rider.bid, std::nullopt));
-            rider.inbox.emplace(id, std::nullopt);
-        }
+    int int_driver_id = drivers_.allocate(driver);
+
+    for (auto int_rider_id: closest_riders){
+        Rider &rider = riders_[int_rider_id];
+        driver.inbox.emplace(int_rider_id, std::make_pair(rider.bid, std::nullopt));
+        rider.inbox.emplace(int_driver_id, std::nullopt);
+
     }
 
     H3Index cell = location_to_h3(loc, H3_RES);
     auto& lst = drivers_by_cell_[cell];
-    if (std::find(lst.begin(), lst.end(), id) == lst.end()) lst.push_back(id);
+    if (std::find(lst.begin(), lst.end(), int_driver_id) == lst.end()) lst.push_back(int_driver_id);
 
-    drivers_.emplace(id, driver);
 
 }
 
 
-void MatchingEngine::driver_interest(int driver_id, int rider_id, double ask){
-    auto r_iter = riders_.find(rider_id);
-    auto d_iter = drivers_.find(driver_id);
+void MatchingEngine::driver_interest(int int_driver_id, int int_rider_id, double ask){
+    // auto r_iter = riders_.find(rider_id);
+    // auto d_iter = drivers_.find(driver_id);
+    Driver &driver = drivers_[int_driver_id];
+    Rider &rider = riders_[int_rider_id];
 
-    if (r_iter != riders_.end() and d_iter != drivers_.end()){
-        Driver &driver = d_iter->second;
-        Rider &rider = r_iter->second;
-        if (rider.bid < ask) {
-            return;
-        }
-
-        if (driver.inbox.find(rider_id) != driver.inbox.end() && (rider.inbox.find(driver_id) != rider.inbox.end())) {
-            driver.inbox[rider_id].second = ask;
-            rider.inbox[driver_id] = ask;
-            
-        }
-
+    if (rider.bid < ask){
+        return;
     }
+
+    driver.inbox[int_rider_id].second = ask;
+    rider.inbox[int_driver_id] = ask;
 }
 
 void MatchingEngine::cancel_driver(int driver_id){
+    drivers_[driver_id].state = OrderState::Canceled;
     clean_driver(driver_id);
 }
 
 void MatchingEngine::cancel_rider(int rider_id){
+    riders_[rider_id].state = OrderState::Canceled;
     clean_rider(rider_id);
 }
 
-void MatchingEngine::clean_driver(int driver_id) {
-    auto iter = drivers_.find(driver_id);
-    if (iter == drivers_.end()) return;
+void MatchingEngine::clean_driver(int int_driver_id) {
+    
 
-    Driver &driver = iter->second;
+    Driver &driver = drivers_[int_driver_id];
 
     // 1. Remove driver from H3 map
     H3Index cell = location_to_h3(driver.loc, H3_RES);
     auto h3_iter = drivers_by_cell_.find(cell);
     if (h3_iter != drivers_by_cell_.end()) {
         auto &lst = h3_iter->second;
-        lst.remove(driver_id); // std::list has remove
+        lst.remove(int_driver_id); // std::list has remove
         if (lst.empty()) {
             drivers_by_cell_.erase(h3_iter);
         }
@@ -136,29 +121,28 @@ void MatchingEngine::clean_driver(int driver_id) {
 
     // 2. Remove driver from riders' driver lists
     
-    for (const auto & [rider_id, _] : driver.inbox) {
-        auto r_iter = riders_.find(rider_id);
-        if (r_iter != riders_.end()) {
-            r_iter->second.inbox.erase(driver_id);
-        }
+    for (const auto & [int_rider_id, _] : driver.inbox) {
+        Rider &rider = riders_[int_rider_id];
+        rider.inbox.erase(int_driver_id);
+       
     }
 
     // 3. Finally, remove driver from drivers_ map
-    drivers_.erase(iter);
+    drivers_.free(int_driver_id);
 }
 
-void MatchingEngine::clean_rider(int rider_id) {
-    auto r_iter = riders_.find(rider_id);
-    if (r_iter == riders_.end()) return;
+void MatchingEngine::clean_rider(int int_rider_id) {
 
-    Rider &rider = r_iter->second;
+
+    Rider &rider = riders_[int_rider_id];
+
+
 
     // Remove rider from each driver's inbox
-    for (const auto & [driver_id, _] : rider.inbox) {
-        auto d_iter = drivers_.find(driver_id);
-        if (d_iter != drivers_.end()) {
-            d_iter->second.inbox.erase(rider_id);
-        }
+    for (const auto & [int_driver_id, _] : rider.inbox) {
+        Driver &driver = drivers_[int_driver_id];
+        driver.inbox.erase(int_rider_id);
+   
     }
 
     
@@ -168,14 +152,14 @@ void MatchingEngine::clean_rider(int rider_id) {
     auto h3_iter = riders_by_cell_.find(cell);
     if (h3_iter != riders_by_cell_.end()) {
         auto &lst = h3_iter->second;
-        lst.remove(rider_id); // std::list has remove
+        lst.remove(int_rider_id); // std::list has remove
         if (lst.empty()) {
             riders_by_cell_.erase(h3_iter);
         }
     }
 
     // Finally, remove from main riders map
-    riders_.erase(r_iter);
+    riders_.free(int_rider_id);
 }
 
 
@@ -183,17 +167,11 @@ void MatchingEngine::clean_rider(int rider_id) {
 void MatchingEngine::make_matches() {
 
 
-    for (auto &[rider_id, rider] : riders_) {
-    std::cout << "Rider " << rider_id << " inbox:\n";
-    for (auto &[driver_id, ask_opt] : rider.inbox) {
-        std::cout << "  driver " << driver_id << " ask: " 
-                  << (ask_opt ? std::to_string(*ask_opt) : "null") << "\n";
-    }
-}
-
-    auto it = riders_.begin();
-    while (it != riders_.end()) {   
-        Rider &rider = it->second;
+    for (size_t i = 0; i < riders_.size(); ++i){
+        Rider &rider = riders_[i];
+        if (rider.state != OrderState::Active){
+            continue;
+        }
         double bid = rider.bid;
 
         int best_driver = -1;
@@ -217,17 +195,13 @@ void MatchingEngine::make_matches() {
             }
         }
 
+
         if (best_driver != -1) {
-            // Advance iterator first
-            auto to_erase = it;
-            ++it;
+            
+            match_pair(best_driver, i, best_ask, second_ask, bid);
 
-            // Match and erase rider + driver
-            match_pair(best_driver, to_erase->first, best_ask, second_ask, bid);
-
-        } else {
-            ++it;
         }
+
     }
 }
 
@@ -238,7 +212,8 @@ void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, do
     
 
     
-
+    riders_[rider_id].state = OrderState::Matched;
+    drivers_[driver_id].state = OrderState::Matched;
     clean_driver(driver_id);
     clean_rider(rider_id);
 }

@@ -19,26 +19,70 @@ struct Location {
 
 };
 
+
+enum class OrderState{
+    Active,
+    Matched,
+    Canceled,
+};
+
 struct Rider {
 
     Location loc;
     double bid;
-    int id;
+    int ext_id;
     // std::list<int> drivers;
     std::unordered_map<int, std::optional<double>> inbox;
+    OrderState state = OrderState::Active;
 
-
-    Rider(int id_ = 0, double bid_ = 0, Location loc_ = Location()) : id(id_), bid(bid_), loc(loc_) {}
+    Rider(int ext_id_ = 0, double bid_ = 0, Location loc_ = Location()) : ext_id(ext_id_), bid(bid_), loc(loc_) {}
 
 };
 
 struct Driver {
     Location loc;
-    int id;
+    int ext_id;
     std::unordered_map<int, std::pair<double, std::optional<double>>> inbox;
+    OrderState state = OrderState::Active;
 
-    Driver(int id_ = 0, Location loc_ = Location()) : id(id_), loc(loc_) {}
 
+    Driver(int ext_id_ = 0, Location loc_ = Location()) : ext_id(ext_id_), loc(loc_) {}
+
+};
+
+
+template<typename T>
+class FreeList {
+    private:
+        std::vector<T> pool;
+        std::vector<int> free_list;
+    
+    public:
+
+        int allocate (const T &item){
+            if (!free_list.empty()){
+                int idx = free_list.back();
+                free_list.pop_back();
+                pool[idx] = item;   
+                return idx;             
+            }
+
+            else{
+                pool.push_back(item);
+                return pool.size()-1;
+            }
+        }
+
+        void free(int idx){
+            free_list.push_back(idx);
+            // pool[idx].state = 
+        }
+
+        T& operator[](int idx){
+            return pool[idx];
+        }
+
+        size_t size() const { return pool.size(); }
 };
 
 
@@ -46,12 +90,12 @@ class MatchingEngine{
     public:
         // MatchingEngine();
         // ~MatchingEngine();
-        void add_rider(int id, double bid, double lat, double lon);
-        void add_driver(int id, double lat, double lon);
-        void cancel_rider(int id);
-        void cancel_driver(int id);
+        void add_rider(int ext_id, double bid, double lat, double lon);
+        void add_driver(int ext_id, double lat, double lon);
+        void cancel_rider(int int_id);
+        void cancel_driver(int int_id);
         
-        void driver_interest(int driver_id, int rider_id, double ask);
+        void driver_interest(int int_driver_id, int int_rider_id, double ask);
         void make_matches();
 
       
@@ -67,19 +111,24 @@ class MatchingEngine{
 
 
 
-        std::unordered_map<int, Rider> riders_;
-        std::unordered_map<int, Driver> drivers_;
+        FreeList<Rider> riders_;
+
+
+        FreeList<Driver> drivers_;
+
+
+        // std::unordered_map<int, Driver> drivers_;
         std::unordered_map<int, std::list<int>> adj_mat;
         std::unordered_map<H3Index, std::list<int>> drivers_by_cell_;
         std::unordered_map<H3Index, std::list<int>> riders_by_cell_;
 
-        void clean_rider(int id);
-        void clean_driver(int id);
+        void clean_rider(int int_id);
+        void clean_driver(int int_id);
 
         double haversine_distance(const Location a, const Location b);
         double deg_to_rad(double deg);
             
-        void match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid);
+        void match_pair(int int_driver_id, int int_rider_id, double best_ask, double second_ask, double bid);
         std::vector<int> find_top_k(Location loc, const std::unordered_map<int, Location>& id_loc_map, size_t k);
         template<typename MapType> std::unordered_map<int, Location>  get_id_location_map(Location loc, const std::unordered_map<H3Index, std::list<int>> &h3_map, const MapType& person_map);
        
