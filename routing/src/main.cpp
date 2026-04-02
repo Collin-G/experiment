@@ -1,65 +1,54 @@
 #include "matching_engine.h"
 #include <iostream>
-#include <thread>
+#include <vector>
+#include <random>
 #include <chrono>
 
-
-
-
-void test_matching_engine(){
-    MatchingEngine engine = MatchingEngine();
-
-
-
-    // Riders and drivers added already
-engine.add_driver(1, 43.6930, -79.3230);
-engine.add_driver(2, 43.6940, -79.3240);
-engine.add_driver(3, 43.6950, -79.3250);
-engine.add_driver(4, 43.6960, -79.3260);
-engine.add_driver(5, 43.6970, -79.3270);
-
-
-engine.add_rider(101, 30.0, 43.6900, -79.3200);
-engine.add_rider(102, 12.0, 43.6910, -79.3210);
-engine.add_rider(103, 5.0, 43.6920, -79.3220);
-
-
-
-// --- Make some drivers show interest ---
-engine.driver_interest(1, 101, 1.0);
-engine.driver_interest(1, 102, 2.0);
-engine.driver_interest(1, 103, 3.0);
-
-engine.driver_interest(2, 101, 0.8);
-engine.driver_interest(2, 102, 1.5);
-engine.driver_interest(2, 103, 2.5);
-
-engine.driver_interest(3, 101, 1.2);
-engine.driver_interest(3, 102, 0.9);
-engine.driver_interest(3, 103, 1.8);
-
-engine.driver_interest(4, 101, 2.0);
-engine.driver_interest(4, 102, 1.0);
-engine.driver_interest(4, 103, 0.5);
-
-engine.driver_interest(5, 101, 1.5);
-engine.driver_interest(5, 102, 1.2);
-engine.driver_interest(5, 103, 0.8);
-
-// Now process matches
-
-
-
-
-engine.make_matches();
-
-
-
-
-}
-
-// -------------------- Main --------------------
 int main() {
-    test_matching_engine();
+    MatchingEngine engine;
+
+    std::vector<int> driver_ids;
+    std::vector<int> rider_ids;
+
+    const int NUM_DRIVERS = 5000;
+    const int NUM_RIDERS = 10000;
+
+    std::mt19937 rng(42); // fixed seed
+    std::uniform_real_distribution<double> lat_dist(43.69, 43.70);
+    std::uniform_real_distribution<double> lon_dist(-79.33, -79.32);
+    std::uniform_real_distribution<double> bid_dist(5.0, 50.0);
+
+    // Add drivers
+    for (int i = 0; i < NUM_DRIVERS; ++i){
+        int int_id = engine.add_driver(i+1, lat_dist(rng), lon_dist(rng));
+        driver_ids.push_back(int_id);
+    }
+
+    // Add riders
+    for (int i = 0; i < NUM_RIDERS; ++i){
+        int int_id = engine.add_rider(100000 + i, bid_dist(rng), lat_dist(rng), lon_dist(rng));
+        rider_ids.push_back(int_id);
+    }
+
+    // Random driver interest simulation
+    std::uniform_int_distribution<int> driver_pick(0, NUM_DRIVERS-1);
+    std::uniform_int_distribution<int> rider_pick(0, NUM_RIDERS-1);
+
+    for (int iter = 0; iter < 10000; ++iter){
+        int d_idx = driver_pick(rng);
+        int r_idx = rider_pick(rng);
+
+        double ask = bid_dist(rng); // random ask
+        engine.driver_interest(driver_ids[d_idx], rider_ids[r_idx], ask);
+
+        if (iter % 500 == 0){ // every 500 interactions, make matches
+            auto start = std::chrono::high_resolution_clock::now();
+            engine.make_matches();
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> diff = end - start;
+            std::cout << "make_matches() took " << diff.count() << " s\n";
+        }
+    }
+
     return 0;
 }
