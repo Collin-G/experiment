@@ -221,8 +221,8 @@ void MatchingEngine::make_matches() {
 }
 
 void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid){
-    // std::cout << "Matched driver " << driver_id 
-    //           << " with rider " << rider_id << std::endl;
+    std::cout << "Matched driver " << driver_id 
+              << " with rider " << rider_id << std::endl;
 
     
 

@@ -111,7 +111,7 @@ class MatchingEngine{
 
         static constexpr int H3_RES = 9;
         static constexpr int SEARCH_RADIUS = 2;
-        static constexpr int K = 5;
+        static constexpr int K = 20;
         static constexpr int TIMEOUT_SEC = 300;
 
         FreeList<Rider> riders_;
