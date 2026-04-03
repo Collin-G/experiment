@@ -99,6 +99,7 @@ class MatchingEngine{
         int add_driver(int ext_id, double lat, double lon);
         void cancel_rider(int int_id);
         void cancel_driver(int int_id);
+        std::vector<int> get_top_k_riders_for_driver(int int_driver_id);
         
         void driver_interest(int int_driver_id, int int_rider_id, double ask);
         void make_matches();
@@ -108,20 +109,15 @@ class MatchingEngine{
 
     private:
 
-        static constexpr int H3_RES = 2;
-        static constexpr int SEARCH_RADIUS = 5;
+        static constexpr int H3_RES = 9;
+        static constexpr int SEARCH_RADIUS = 2;
         static constexpr int K = 5;
         static constexpr int TIMEOUT_SEC = 300;
 
-
-
-
         FreeList<Rider> riders_;
-
-
         FreeList<Driver> drivers_;
 
-
+        
         // std::unordered_map<int, Driver> drivers_;
         std::unordered_map<int, std::list<int>> adj_mat;
         std::unordered_map<H3Index, FreeList<int>> drivers_by_cell_;
@@ -134,12 +130,20 @@ class MatchingEngine{
         double deg_to_rad(double deg);
             
         void match_pair(int int_driver_id, int int_rider_id, double best_ask, double second_ask, double bid);
-        std::vector<int> find_top_k(Location loc, const std::unordered_map<int, Location>& id_loc_map, size_t k);
-        template<typename MapType> std::unordered_map<int, Location>  get_id_location_map(Location loc, const std::unordered_map<H3Index, FreeList<int>> &h3_map, const MapType& person_map);
+        
+        template<typename FreeListType>
+        std::vector<int> find_top_k_from_cells(
+        Location loc,
+        const std::unordered_map<H3Index, FreeList<int>>& h3_map,
+        const FreeListType& free_list,
+        size_t k);
+
        
 
         H3Index location_to_h3(Location loc, int res) const;
         std::vector<H3Index> get_neighboring_cells(H3Index center, int radius) const;
+
+        
 
 
 

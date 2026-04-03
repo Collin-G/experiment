@@ -6,38 +6,19 @@
 #include <limits>
 #include <cmath>
 #include <nlohmann/json.hpp>
+#include <iostream>
 
 
-template<typename MapType>
-std::unordered_map<int, Location> MatchingEngine::get_id_location_map(Location loc, const std::unordered_map<H3Index, FreeList<int>>& h3_map, const MapType& free_list){
-    std::unordered_map<int, Location> loc_map;
-    std::vector<H3Index> cells = get_neighboring_cells(location_to_h3(loc, H3_RES), SEARCH_RADIUS);
-
-    for (auto cell : cells){
-       auto iter = h3_map.find(cell);
-       if (iter != h3_map.end()) {
-            auto person_ids = iter->second;
-            for (size_t i = 0; i < person_ids.size(); ++i){
-                auto person_id  = person_ids[i];
-                auto person = free_list[person_id];
-                loc_map.emplace(person_id, person.loc);
-            }
-          
-        }
-    }
-
-    return loc_map;
-
-}
 
 int MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
     Location loc(lat, lon);
-    Rider rider(ext_id, bid, loc);
+    Rider rider_item(ext_id, bid, loc);
 
-    std::unordered_map<int, Location> id_loc_map = get_id_location_map(loc, drivers_by_cell_, drivers_);    
-    std::vector<int> closest_drivers = find_top_k(loc, id_loc_map, K);
+    std::vector<int> closest_drivers = find_top_k_from_cells(loc, drivers_by_cell_, drivers_, K);
+    // std::cout << closest_drivers.size();
 
-    int int_rider_id = riders_.allocate(rider);
+    int int_rider_id = riders_.allocate(rider_item);
+    Rider &rider = riders_[int_rider_id];
 
     for (auto int_driver_id : closest_drivers){
         Driver &driver = drivers_[int_driver_id];
@@ -49,18 +30,21 @@ int MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
     H3Index cell = location_to_h3(loc, H3_RES);
     riders_by_cell_[cell].allocate(int_rider_id);
 
+    
+
     return int_rider_id;
 }
 
 
 int MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
     Location loc(lat, lon);
-    Driver driver(ext_driver_id, loc);
+    Driver driver_item(ext_driver_id, loc);
 
-    std::unordered_map<int, Location> id_loc_map = get_id_location_map(loc, riders_by_cell_, riders_);
-    std::vector<int> closest_riders = find_top_k(loc, id_loc_map, K);
+    std::vector<int> closest_riders = find_top_k_from_cells(loc, riders_by_cell_, riders_, K);
+    // std::cout<< closest_rider
 
-    int int_driver_id = drivers_.allocate(driver);
+    int int_driver_id = drivers_.allocate(driver_item);
+    Driver &driver = drivers_[int_driver_id];
 
     for (auto int_rider_id : closest_riders){
         Rider &rider = riders_[int_rider_id];
@@ -95,7 +79,7 @@ void MatchingEngine::driver_interest(int int_driver_id, int int_rider_id, double
     }
 
     for (size_t i = 0; i < rider.inbox.size(); ++i){
-        if (std::get<0>(rider.inbox[i]) == int_rider_id) {
+        if (std::get<0>(rider.inbox[i]) == int_driver_id) {
             std::get<1>(rider.inbox[i]) = ask;
             break;
         }
@@ -207,7 +191,7 @@ void MatchingEngine::make_matches() {
         double best_ask = std::numeric_limits<double>::infinity();
         double second_ask = std::numeric_limits<double>::infinity();
 
-
+        // std::cout << rider.inbox.size() << std::endl;
         for (size_t i = 0; i < rider.inbox.size(); ++i){
             int driver_id = std::get<0>(rider.inbox[i]);
             auto ask_opt = std::get<1>(rider.inbox[i]);
@@ -237,8 +221,8 @@ void MatchingEngine::make_matches() {
 }
 
 void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid){
-    std::cout << "Matched driver " << driver_id 
-              << " with rider " << rider_id << std::endl;
+    // std::cout << "Matched driver " << driver_id 
+    //           << " with rider " << rider_id << std::endl;
 
     
 
@@ -278,46 +262,46 @@ double MatchingEngine::haversine_distance(const Location a, const Location b) {
     return EARTH_RADIUS_KM * c;   // distance in km
 }
 
-// WriteCallback for curl
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 
-
-
-std::vector<int> MatchingEngine::find_top_k(
+template<typename FreeListType>
+std::vector<int> MatchingEngine::find_top_k_from_cells(
     Location loc,
-    const std::unordered_map<int, Location> &map,
+    const std::unordered_map<H3Index, FreeList<int>>& h3_map,
+    const FreeListType& free_list,
     size_t k)
 {
-    if (map.empty() || k == 0) return {};
-
-    
-    // Create our max heap
     using Pair = std::pair<int, double>;
-    auto comp = [](Pair a, Pair b){return a.second < b.second;};
+    auto comp = [](Pair a, Pair b){ return a.second < b.second; };
+
     std::priority_queue<Pair, std::vector<Pair>, decltype(comp)> heap(comp);
 
+    auto cells = get_neighboring_cells(location_to_h3(loc, H3_RES), SEARCH_RADIUS);
 
-    for (const auto& [person_id, person_loc] : map) {
-        double distance = haversine_distance(person_loc, loc);
-        heap.emplace(person_id, distance);
-        if (heap.size() > k) heap.pop();
-        // person_order.push_back(person_id);
+    for (auto cell : cells) {
+        auto iter = h3_map.find(cell);
+        if (iter == h3_map.end()) continue;
+
+        const auto& person_ids = iter->second;
+
+        for (size_t i = 0; i < person_ids.size(); ++i) {
+            int id = person_ids[i];
+            const auto& person = free_list[id];
+
+            double dist = haversine_distance(loc, person.loc);
+
+            heap.emplace(id, dist);
+            if (heap.size() > k) heap.pop();
+        }
     }
 
- 
-
-    std::vector<int> top_k ;
-
+    std::vector<int> result;
     while (!heap.empty()) {
-        top_k.push_back(heap.top().first);
+        result.push_back(heap.top().first);
         heap.pop();
     }
 
-    std::reverse(top_k.begin(), top_k.end());
-    return top_k;
+    std::reverse(result.begin(), result.end());
+    return result;
 }
 
 H3Index MatchingEngine::location_to_h3(Location loc, int res) const {
@@ -338,4 +322,25 @@ std::vector<H3Index> MatchingEngine::get_neighboring_cells(H3Index center, int r
 
 
 
+std::vector<int> MatchingEngine::get_top_k_riders_for_driver(int int_driver_id) {
+    const Driver& driver = drivers_[int_driver_id];
+    std::vector<int> result;
 
+    auto driver_h3 = location_to_h3(driver.loc, H3_RES);
+    auto neighbors = get_neighboring_cells(driver_h3, SEARCH_RADIUS);
+
+    for (auto h3 : neighbors) {
+        auto it = riders_by_cell_.find(h3);
+        if (it != riders_by_cell_.end()) {
+            const FreeList<int>& flist = it->second;
+            for (size_t i = 0; i < flist.size(); ++i) {
+                int idx = flist[i];
+                if (riders_[idx].state == OrderState::Active) {
+                    result.push_back(idx);
+                }
+            }
+        }
+    }
+
+    return result;
+}
