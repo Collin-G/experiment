@@ -56,7 +56,7 @@ int main() {
         // Pick a random rider from nearby
         int rider_id = nearby_riders[rng() % nearby_riders.size()];
 
-        double ask = 1; // always acceptable for testing
+        double ask = bid_dist(rng); // always acceptable for testing
 
         auto start_interest = std::chrono::high_resolution_clock::now();
         engine.driver_interest(driver_id, rider_id, ask);

@@ -194,6 +194,9 @@ void MatchingEngine::make_matches() {
         // std::cout << rider.inbox.size() << std::endl;
         for (size_t i = 0; i < rider.inbox.size(); ++i){
             int driver_id = std::get<0>(rider.inbox[i]);
+            if (drivers_[driver_id].state != OrderState::Active) {
+                continue;
+            }
             auto ask_opt = std::get<1>(rider.inbox[i]);
 
             if (!ask_opt) continue;
@@ -221,8 +224,11 @@ void MatchingEngine::make_matches() {
 }
 
 void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid){
-    std::cout << "Matched driver " << driver_id 
-              << " with rider " << rider_id << std::endl;
+    if (riders_[rider_id].state != OrderState::Active || drivers_[driver_id].state != OrderState::Active){
+        return;
+    }
+    // std::cout << "Matched driver " << driver_id 
+    //           << " with rider " << rider_id << std::endl;
 
     
 
@@ -266,7 +272,7 @@ double MatchingEngine::haversine_distance(const Location a, const Location b) {
 template<typename FreeListType>
 std::vector<int> MatchingEngine::find_top_k_from_cells(
     Location loc,
-    const std::unordered_map<H3Index, FreeList<int>>& h3_map,
+    const ankerl::unordered_dense::map<H3Index, FreeList<int>>& h3_map,
     const FreeListType& free_list,
     size_t k)
 {
@@ -286,6 +292,7 @@ std::vector<int> MatchingEngine::find_top_k_from_cells(
         for (size_t i = 0; i < person_ids.size(); ++i) {
             int id = person_ids[i];
             const auto& person = free_list[id];
+            if (person.state != OrderState::Active) continue;
 
             double dist = haversine_distance(loc, person.loc);
 

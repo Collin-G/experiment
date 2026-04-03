@@ -707,6 +707,8 @@ CMakeFiles/routing.dir/src/graphbuilder.cpp.o: /home/collin/programming/flux/rou
   /usr/local/include/osmium/util/misc.hpp
 
 CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/routing/src/matching_engine.cpp \
+  /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/stl.h \
+  /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/unordered_dense.h \
   /home/collin/programming/flux/routing/include/matching_engine.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -793,6 +795,7 @@ CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/
   /usr/include/c++/11/bits/sstream.tcc \
   /usr/include/c++/11/bits/std_abs.h \
   /usr/include/c++/11/bits/std_function.h \
+  /usr/include/c++/11/bits/std_mutex.h \
   /usr/include/c++/11/bits/stl_algo.h \
   /usr/include/c++/11/bits/stl_algobase.h \
   /usr/include/c++/11/bits/stl_bvector.h \
@@ -824,6 +827,7 @@ CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/
   /usr/include/c++/11/bits/unique_ptr.h \
   /usr/include/c++/11/bits/unordered_map.h \
   /usr/include/c++/11/bits/uses_allocator.h \
+  /usr/include/c++/11/bits/uses_allocator_args.h \
   /usr/include/c++/11/bits/valarray_after.h \
   /usr/include/c++/11/bits/valarray_array.h \
   /usr/include/c++/11/bits/valarray_array.tcc \
@@ -871,6 +875,7 @@ CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/
   /usr/include/c++/11/locale \
   /usr/include/c++/11/map \
   /usr/include/c++/11/memory \
+  /usr/include/c++/11/memory_resource \
   /usr/include/c++/11/new \
   /usr/include/c++/11/numeric \
   /usr/include/c++/11/optional \
@@ -882,6 +887,7 @@ CMakeFiles/routing.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/
   /usr/include/c++/11/pstl/pstl_config.h \
   /usr/include/c++/11/queue \
   /usr/include/c++/11/ratio \
+  /usr/include/c++/11/shared_mutex \
   /usr/include/c++/11/sstream \
   /usr/include/c++/11/stdexcept \
   /usr/include/c++/11/stdlib.h \
@@ -2053,6 +2059,10 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /usr/local/include/osmium/util/file.hpp:
 
+/usr/local/include/osmium/util/delta.hpp:
+
+/usr/local/include/osmium/thread/pool.hpp:
+
 /usr/include/x86_64-linux-gnu/bits/errno.h:
 
 /usr/include/x86_64-linux-gnu/bits/signum-arch.h:
@@ -2088,6 +2098,10 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 /usr/include/c++/11/stdexcept:
 
 /usr/include/c++/11/pstl/glue_algorithm_defs.h:
+
+/usr/local/include/osmium/thread/util.hpp:
+
+/usr/include/protozero/pbf_reader.hpp:
 
 /usr/include/c++/11/istream:
 
@@ -2431,7 +2445,13 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /usr/include/c++/11/initializer_list:
 
+/usr/local/include/osmium/thread/queue.hpp:
+
+/usr/local/include/osmium/io/error.hpp:
+
 /usr/include/c++/11/tr1/riemann_zeta.tcc:
+
+/usr/include/c++/11/memory_resource:
 
 /usr/include/stdc-predef.h:
 
@@ -2731,6 +2751,12 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /home/collin/programming/flux/routing/src/matching_engine.cpp:
 
+/home/collin/programming/flux/third-party/unordered_dense/include/ankerl/stl.h:
+
+/usr/local/include/osmium/io/detail/protobuf_tags.hpp:
+
+/home/collin/programming/flux/third-party/unordered_dense/include/ankerl/unordered_dense.h:
+
 /usr/include/c++/11/vector:
 
 /home/collin/programming/flux/routing/include/matching_engine.h:
@@ -2809,9 +2835,11 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /usr/local/include/osmium/io/reader.hpp:
 
-/usr/include/c++/11/bits/valarray_after.h:
+/usr/include/c++/11/bits/uses_allocator_args.h:
 
-/usr/local/include/osmium/thread/pool.hpp:
+/usr/include/c++/11/list:
+
+/usr/include/c++/11/bits/valarray_after.h:
 
 /usr/include/c++/11/bits/valarray_array.h:
 
@@ -2822,8 +2850,6 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h:
 
 /usr/include/c++/11/filesystem:
-
-/usr/include/c++/11/list:
 
 /usr/include/c++/11/map:
 
@@ -2838,6 +2864,12 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 /usr/include/c++/11/ratio:
 
 /usr/include/c++/11/thread:
+
+/usr/include/c++/11/shared_mutex:
+
+/usr/include/nlohmann/detail/iterators/json_reverse_iterator.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_statx.h:
 
 /usr/include/c++/11/sstream:
 
@@ -2892,10 +2924,6 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 /usr/include/nlohmann/detail/iterators/iter_impl.hpp:
 
 /usr/include/nlohmann/detail/iterators/iterator_traits.hpp:
-
-/usr/include/nlohmann/detail/iterators/json_reverse_iterator.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_statx.h:
 
 /usr/include/nlohmann/detail/macro_scope.hpp:
 
@@ -3033,6 +3061,12 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
+/usr/local/include/osmium/util/config.hpp:
+
+/usr/include/protozero/data_view.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
 /usr/include/x86_64-linux-gnu/bits/sigaction.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigcontext.h:
@@ -3093,17 +3127,11 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 
 /usr/local/include/osmium/io/detail/pbf_decoder.hpp:
 
-/usr/local/include/osmium/io/detail/protobuf_tags.hpp:
-
 /usr/local/include/osmium/util/options.hpp:
 
 /usr/local/include/osmium/io/detail/read_thread.hpp:
 
 /usr/local/include/osmium/io/detail/read_write.hpp:
-
-/usr/include/protozero/pbf_reader.hpp:
-
-/usr/local/include/osmium/thread/util.hpp:
 
 /usr/include/time.h:
 
@@ -3126,15 +3154,3 @@ CMakeFiles/routing.dir/src/router_api.cpp.o: /home/collin/programming/flux/routi
 /usr/local/include/osmium/memory/buffer.hpp:
 
 /usr/local/include/osmium/thread/function_wrapper.hpp:
-
-/usr/local/include/osmium/io/error.hpp:
-
-/usr/local/include/osmium/thread/queue.hpp:
-
-/usr/include/protozero/data_view.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/local/include/osmium/util/config.hpp:
-
-/usr/local/include/osmium/util/delta.hpp:

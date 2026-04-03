@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DJSON_DIAGNOSTICS=0 -DJSON_USE_IMPLICIT_CONVERSIONS=1
 
-CXX_INCLUDES = -I/home/collin/programming/flux/routing/include
+CXX_INCLUDES = -I/home/collin/programming/flux/routing/include -I/home/collin/programming/flux/routing/../third-party/unordered_dense/include
 
 CXX_FLAGS = -std=gnu++17 -fPIE
 

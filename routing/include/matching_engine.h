@@ -10,6 +10,7 @@
 #include <memory>
 #include <sstream>
 #include <iostream>
+#include "ankerl/unordered_dense.h"
 
 struct Location {
     
@@ -118,10 +119,10 @@ class MatchingEngine{
         FreeList<Driver> drivers_;
 
         
-        // std::unordered_map<int, Driver> drivers_;
-        std::unordered_map<int, std::list<int>> adj_mat;
-        std::unordered_map<H3Index, FreeList<int>> drivers_by_cell_;
-        std::unordered_map<H3Index, FreeList<int>> riders_by_cell_;
+        // ankerl::unordered_dense::map<int, Driver> drivers_;
+        ankerl::unordered_dense::map<int, std::list<int>> adj_mat;
+        ankerl::unordered_dense::map<H3Index, FreeList<int>> drivers_by_cell_;
+        ankerl::unordered_dense::map<H3Index, FreeList<int>> riders_by_cell_;
 
         void clean_rider(int int_id);
         void clean_driver(int int_id);
@@ -134,7 +135,7 @@ class MatchingEngine{
         template<typename FreeListType>
         std::vector<int> find_top_k_from_cells(
         Location loc,
-        const std::unordered_map<H3Index, FreeList<int>>& h3_map,
+        const ankerl::unordered_dense::map<H3Index, FreeList<int>>& h3_map,
         const FreeListType& free_list,
         size_t k);
 

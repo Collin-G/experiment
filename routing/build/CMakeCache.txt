@@ -225,17 +225,8 @@ osm_reader_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 osm_reader_SOURCE_DIR:STATIC=/home/collin/programming/flux/routing
 
-//Value Computed by CMake
-routing_BINARY_DIR:STATIC=/home/collin/programming/flux/routing/build
-
-//Value Computed by CMake
-routing_IS_TOP_LEVEL:STATIC=ON
-
 //Dependencies for the target
 routing_LIB_DEPENDS:STATIC=general;/usr/local/lib/libh3.a;general;/usr/lib/x86_64-linux-gnu/libcurl.so;general;bz2;general;boost_system;general;boost_iostreams;general;boost_date_time;general;z;general;expat;general;pthread;
-
-//Value Computed by CMake
-routing_SOURCE_DIR:STATIC=/home/collin/programming/flux/routing
 
 
 ########################

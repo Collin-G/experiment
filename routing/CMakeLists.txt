@@ -5,6 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # ========================
+# Third-party includes
+# ========================
+# Directly point to the source folder of unordered_dense
+set(UNORDERED_DENSE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third-party/unordered_dense/include)
+
+# ========================
 # Find H3 library
 # ========================
 find_library(H3_LIBRARY NAMES h3)
@@ -18,11 +24,13 @@ endif()
 # Find libcurl
 # ========================
 find_package(CURL REQUIRED)
-
 if(NOT CURL_FOUND)
     message(FATAL_ERROR "libcurl not found. Install with: sudo apt install libcurl4-openssl-dev")
 endif()
 
+# ========================
+# Find nlohmann_json
+# ========================
 find_package(nlohmann_json REQUIRED)
 
 # ========================
@@ -35,7 +43,6 @@ add_library(routing STATIC
     src/astar.cpp
     src/router.cpp
     src/router_api.cpp
-    # src/matching.cpp
     src/matching_engine.cpp
 )
 
@@ -44,6 +51,7 @@ target_include_directories(routing
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${H3_INCLUDE_DIR}
         ${CURL_INCLUDE_DIRS}
+        ${UNORDERED_DENSE_INCLUDE_DIR}   # <-- unordered_dense include
         /usr/local/include
 )
 
@@ -61,7 +69,7 @@ target_link_libraries(routing
 )
 
 # ========================
-# Matching Engine Test Executable
+# Executable
 # ========================
 add_executable(routing_cli
     src/main.cpp
@@ -72,6 +80,7 @@ target_include_directories(routing_cli
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${H3_INCLUDE_DIR}
         ${CURL_INCLUDE_DIRS}
+        ${UNORDERED_DENSE_INCLUDE_DIR}   # <-- unordered_dense include
 )
 
 target_link_libraries(routing_cli
