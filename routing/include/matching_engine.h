@@ -21,6 +21,8 @@
 
     };
 
+    
+
 
     enum class OrderState{
         Active,
@@ -77,6 +79,55 @@
             size_t size() const { return pool.size(); }
     };
 
+
+    template<typename T>
+    class SwapList{
+        private:
+            std::vector<T> pool;
+
+        public:
+            T& operator[](int idx) {
+                return pool[idx];
+            }
+
+            const T& operator[](int idx) const {
+                return pool[idx];
+            }
+
+            void push_back(const T& item){
+                pool.push_back(item);
+            }
+
+            void free(int idx){
+                T& temp = pool[idx];
+                pool[idx] = pool[pool.size()-1];
+                pool.pop_back();
+            }
+
+            T& front(){
+                return pool.front();
+            }
+
+            void clear(){
+                pool.clear();
+            }
+
+            bool empty(){
+                return pool.empty();
+            }
+
+       
+            size_t size() const { return pool.size(); }
+
+     };
+
+
+
+    struct CellState {
+        size_t cursor = 0;
+        SwapList<std::tuple<int, int>> swap_list;
+    };
+    
     struct Rider {
 
         Location loc;
@@ -84,7 +135,9 @@
         int ext_id;
         int h3_id;
         int inbox_id;
+        bool interesting = false;
         FreeList<std::tuple<int, int, std::optional<double>>> inbox;
+        SwapList<std::tuple<int, int, double>> interested_drivers;
         OrderState state = OrderState::Active;
 
         Rider(int ext_id_ = 0, double bid_ = 0, Location loc_ = Location()) : ext_id(ext_id_), bid(bid_), loc(loc_) {}
@@ -97,6 +150,7 @@
         int h3_id;
         int inbox_id;
         FreeList<std::tuple<int, int, double, std::optional<double>>> inbox;
+        SwapList<std::tuple<int, double>> interesting_riders;
         OrderState state = OrderState::Active;
 
 
@@ -123,19 +177,19 @@
 
         private:
 
-            static constexpr int H3_RES = 9;
-            static constexpr int SEARCH_RADIUS = 2;
+            static constexpr int H3_RES = 8;
+            static constexpr int SEARCH_RADIUS = 1;
             static constexpr int K = 20;
             static constexpr int TIMEOUT_SEC = 300;
-            static constexpr int MAX_INBOX = 50;
 
             FreeList<Rider> riders_;
             FreeList<Driver> drivers_;
+            SwapList<std::tuple<int, int>> interest_map_; 
 
             
             // ankerl::unordered_dense::map<int, Driver> drivers_;
-            ankerl::unordered_dense::map<H3Index, FreeList<std::tuple<int, int>>> drivers_by_cell_;
-            ankerl::unordered_dense::map<H3Index, FreeList<std::tuple<int, int>>> riders_by_cell_;
+            ankerl::unordered_dense::map<H3Index, CellState> drivers_by_cell_;
+            ankerl::unordered_dense::map<H3Index, CellState> riders_by_cell_;
 
             void clean_rider(int int_id);
             void clean_driver(int int_id);
@@ -148,7 +202,7 @@
             template<typename FreeListType>
             std::vector<int> find_top_k_from_cells(
             Location loc,
-            ankerl::unordered_dense::map<H3Index, FreeList<std::tuple<int, int>>>& h3_map,
+            ankerl::unordered_dense::map<H3Index, CellState>& cell_map,
             FreeListType& free_list,
             size_t k);
 
@@ -156,12 +210,6 @@
 
             H3Index location_to_h3(Location loc, int res) const;
             std::vector<H3Index> get_neighboring_cells(H3Index center, int radius) const;
-
-            
-
-
-
-
 
     };
 

@@ -10,8 +10,8 @@ int main() {
     std::vector<int> driver_ids;
     std::vector<int> rider_ids;
 
-    const int NUM_DRIVERS = 100000;
-    const int NUM_RIDERS = 100000;
+    const int NUM_DRIVERS = 5000;
+    const int NUM_RIDERS = 5000;
 
     std::mt19937 rng(42); // fixed seed
     std::uniform_real_distribution<double> lat_dist(43.69, 43.70);

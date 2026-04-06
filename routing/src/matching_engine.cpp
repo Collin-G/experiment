@@ -25,18 +25,15 @@ int MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
         if (driver.state != OrderState::Active) continue; // <--- skip inactive
         int d_seq_no = drivers_.seq_no(int_driver_id);
         
-        if (driver.inbox.active_size() < MAX_INBOX){
+      
         driver.inbox.allocate({int_rider_id, r_seq_no, bid, std::nullopt});
         rider.inbox.allocate({int_driver_id, d_seq_no, std::nullopt});
         
-    }
-
-        // if (rider.inbox.active_size() < MAX_INBOX){
-        // rider.inbox.allocate({int_driver_id, d_seq_no, std::nullopt});}
+        
     }
 
     H3Index cell = location_to_h3(loc, H3_RES);
-    riders_by_cell_[cell].allocate({int_rider_id, r_seq_no});
+    riders_by_cell_[cell].swap_list.push_back({int_rider_id, r_seq_no});
 
     return int_rider_id;
 }
@@ -57,12 +54,14 @@ int MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
         Rider &rider = riders_[int_rider_id];
         if (rider.state != OrderState::Active) continue; // <--- skip inactive
         int r_seq_no = riders_.seq_no(int_rider_id);
+      
         driver.inbox.allocate({int_rider_id, r_seq_no, rider.bid, std::nullopt});
         rider.inbox.allocate({int_driver_id, d_seq_no, std::nullopt});
+        
     }
 
     H3Index cell = location_to_h3(loc, H3_RES);
-    drivers_by_cell_[cell].allocate({int_driver_id, d_seq_no});
+    drivers_by_cell_[cell].swap_list.push_back({int_driver_id, d_seq_no});
 
     return int_driver_id;
 }
@@ -78,28 +77,15 @@ void MatchingEngine::driver_interest(int int_driver_id, int int_rider_id, double
         return;
     }
 
-
-    for (size_t i = 0; i < driver.inbox.size(); ++i){
-        // if (std::get<1>(driver.inbox[i]) != riders_.seq_no(int_rider_id)){
-        //     driver.inbox.free(i);
-        // }
-        if (std::get<0>(driver.inbox[i]) == int_rider_id && std::get<1>(driver.inbox[i]) == riders_.seq_no(int_rider_id)) {
-            std::get<3>(driver.inbox[i]) = ask;
-            break;
-        }
-        
-    }
-
-    for (size_t i = 0; i < rider.inbox.size(); ++i){
-        // if (std::get<1>(rider.inbox[i]) != drivers_.seq_no(int_driver_id)){
-        //     rider.inbox.free(i);
-        // }
-        if (std::get<0>(rider.inbox[i]) == int_driver_id && std::get<1>(rider.inbox[i]) == drivers_.seq_no(int_driver_id)) {
-            std::get<2>(rider.inbox[i]) = ask;
-            break;
-        }
-    }
+    // interest_map_.push_back(rider);
+    int d_seq_no = drivers_.seq_no(int_driver_id);
+    int r_seq_no = riders_.seq_no(int_rider_id);
     
+    rider.interested_drivers.push_back({int_driver_id, d_seq_no, ask});
+    if (!rider.interesting){
+        interest_map_.push_back({int_rider_id, r_seq_no});
+        rider.interesting = true;
+    }
 
 }
 
@@ -129,12 +115,13 @@ void MatchingEngine::clean_rider(int int_rider_id) {
 
 void MatchingEngine::make_matches() {
 
-
-    for (size_t i = 0; i < riders_.size(); ++i){
-        Rider &rider = riders_[i];
-        if (rider.state != OrderState::Active){
+    for (size_t i = 0; i < interest_map_.size(); ++i){
+        auto& [id, seq_no] = interest_map_[i];
+        Rider &rider = riders_[id];
+        if (rider.state != OrderState::Active || seq_no != riders_.seq_no(id)){
             continue;
         }
+
         double bid = rider.bid;
 
         int best_driver = -1;
@@ -143,19 +130,17 @@ void MatchingEngine::make_matches() {
         double second_ask = std::numeric_limits<double>::infinity();
 
         // std::cout << rider.inbox.size() << std::endl;
-        for (size_t k = 0; k < rider.inbox.size(); ++k){
-            int driver_id = std::get<0>(rider.inbox[k]);
-            int d_seq_no = std::get<1>(rider.inbox[k]);
+        for (size_t k = 0; k < rider.interested_drivers.size(); ++k){
+            int driver_id = std::get<0>(rider.interested_drivers[k]);
+            int d_seq_no = std::get<1>(rider.interested_drivers[k]);
             if (drivers_[driver_id].state != OrderState::Active || d_seq_no != drivers_.seq_no(driver_id)) {
                 // if(d_seq_no != drivers_.seq_no(driver_id)){
                 //     rider.inbox.free(k);
                 // }
                 continue;
             }
-            auto ask_opt = std::get<2>(rider.inbox[k]);
+            auto ask = std::get<2>(rider.interested_drivers[k]);
 
-            if (!ask_opt) continue;
-            double ask = *ask_opt;
             if (ask < best_ask) {
                 second_driver = best_driver;
                 second_ask = best_ask;
@@ -171,11 +156,16 @@ void MatchingEngine::make_matches() {
 
         if (best_driver != -1) {
             
-            match_pair(best_driver, i, best_ask, second_ask, bid);
+            match_pair(best_driver, id, best_ask, second_ask, bid);
 
         }
-
+        else{
+            rider.interesting = false;
+        }
+        
     }
+    interest_map_.clear();
+
 }
 
 void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid){
@@ -216,55 +206,54 @@ double MatchingEngine::fast_approx_distance_km(const Location &a, const Location
 template<typename FreeListType>
 std::vector<int> MatchingEngine::find_top_k_from_cells(
     Location loc,
-    ankerl::unordered_dense::map<H3Index, FreeList<std::tuple<int, int>>>& h3_map,
+    ankerl::unordered_dense::map<H3Index, CellState>& cell_map,
     FreeListType& free_list,
     size_t k)
 {
-    using Pair = std::pair<int, double>;
-    std::vector<Pair> top_k;
-    top_k.reserve(k);
+    std::vector<int> result;
+    result.reserve(k);
+
+    // auto& cell_state = cell_map.
 
     auto cells = get_neighboring_cells(location_to_h3(loc, H3_RES), SEARCH_RADIUS);
 
     for (auto cell : cells) {
-        auto iter = h3_map.find(cell);
-        if (iter == h3_map.end()) continue;
+        auto iter = cell_map.find(cell);
+        if (iter == cell_map.end()) continue;
 
-        auto& person_ids = iter->second;
+        auto& cell_state = iter->second;
+        auto& person_ids = cell_state.swap_list;
+        if (person_ids.empty()) continue;
+        int start = cell_state.cursor;
+        
+        cell_state.cursor = (cell_state.cursor+1) % person_ids.size();
+        
 
-        for (size_t i = 0; i < person_ids.size(); ++i) {
-            int id = std::get<0>(person_ids[i]);
-            int seq_no = std::get<1>(person_ids[i]);
+        for (size_t i = 0; i < person_ids.size();) {
+            int idx = (start+i) % person_ids.size();
+            int id = std::get<0>(person_ids[idx]);
+            int seq_no = std::get<1>(person_ids[idx]);
+
             auto& person = free_list[id];
+
             if (person.state != OrderState::Active || seq_no != free_list.seq_no(id)) {
-                if (seq_no != free_list.seq_no(id)) person_ids.free(i);
+                if (seq_no != free_list.seq_no(id)) {
+                    person_ids.free(i);
+                    continue;
+                }
+                ++i;
                 continue;
             }
 
-            double dist = fast_approx_distance_km(loc, person.loc);
+            result.push_back(id);
 
-            if (top_k.size() < k) {
-                top_k.emplace_back(id, dist);
-            } else {
-                // find max distance in current top_k
-                size_t max_idx = 0;
-                for (size_t j = 1; j < top_k.size(); ++j) {
-                    if (top_k[j].second > top_k[max_idx].second) max_idx = j;
-                }
-
-                if (dist < top_k[max_idx].second) {
-                    top_k[max_idx] = {id, dist};
-                }
+            if (result.size() >= k) {
+                return result;
             }
+
+            ++i;
         }
     }
-
-    // sort ascending by distance
-    std::sort(top_k.begin(), top_k.end(), [](const Pair &a, const Pair &b){ return a.second < b.second; });
-
-    std::vector<int> result;
-    result.reserve(top_k.size());
-    for (auto &p : top_k) result.push_back(p.first);
 
     return result;
 }
@@ -297,7 +286,7 @@ std::vector<int> MatchingEngine::get_top_k_riders_for_driver(int int_driver_id) 
     for (auto h3 : neighbors) {
         auto it = riders_by_cell_.find(h3);
         if (it != riders_by_cell_.end()) {
-            const FreeList<std::tuple<int, int>>& flist = it->second;
+            const SwapList<std::tuple<int, int>>& flist = it->second.swap_list;
             for (size_t i = 0; i < flist.size(); ++i) {
                 int idx = std::get<0>(flist[i]);
                 int seq_no = std::get<1>(flist[i]);
