@@ -14,7 +14,7 @@ int MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
     Location loc(lat, lon);
     Rider rider_item(ext_id, bid, loc);
 
-    std::vector<int> closest_drivers = find_top_k_from_cells(loc, drivers_by_cell_, drivers_, K);
+    std::vector<int> closest_drivers = find_top_k_from_cells(loc, drivers_by_cell_, drivers_, K, drivers_cursor_);
     // std::cout << closest_drivers.size();
 
     int int_rider_id = riders_.allocate(rider_item);
@@ -26,8 +26,8 @@ int MatchingEngine::add_rider(int ext_id, double bid, double lat, double lon) {
         int d_seq_no = drivers_.seq_no(int_driver_id);
         
       
-        driver.inbox.allocate({int_rider_id, r_seq_no, bid, std::nullopt});
-        rider.inbox.allocate({int_driver_id, d_seq_no, std::nullopt});
+        driver.inbox.allocate({int_rider_id, r_seq_no});
+        rider.inbox.allocate({int_driver_id, d_seq_no});
         
         
     }
@@ -43,7 +43,7 @@ int MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
     Location loc(lat, lon);
     Driver driver_item(ext_driver_id, loc);
 
-    std::vector<int> closest_riders = find_top_k_from_cells(loc, riders_by_cell_, riders_, K);
+    std::vector<int> closest_riders = find_top_k_from_cells(loc, riders_by_cell_, riders_, K, riders_cursor_);
     // std::cout<< closest_rider
 
     int int_driver_id = drivers_.allocate(driver_item);
@@ -55,8 +55,8 @@ int MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
         if (rider.state != OrderState::Active) continue; // <--- skip inactive
         int r_seq_no = riders_.seq_no(int_rider_id);
       
-        driver.inbox.allocate({int_rider_id, r_seq_no, rider.bid, std::nullopt});
-        rider.inbox.allocate({int_driver_id, d_seq_no, std::nullopt});
+        driver.inbox.allocate({int_rider_id, r_seq_no});
+        rider.inbox.allocate({int_driver_id, d_seq_no});
         
     }
 
@@ -208,7 +208,8 @@ std::vector<int> MatchingEngine::find_top_k_from_cells(
     Location loc,
     ankerl::unordered_dense::map<H3Index, CellState>& cell_map,
     FreeListType& free_list,
-    size_t k)
+    size_t k,
+    size_t &cursor)
 {
     std::vector<int> result;
     result.reserve(k);
@@ -252,6 +253,23 @@ std::vector<int> MatchingEngine::find_top_k_from_cells(
             }
 
             ++i;
+        }
+    }
+
+    if (result.empty() && free_list.size() > 0){
+        size_t start = cursor;
+        cursor = (cursor + 1) % free_list.size();
+        for (size_t i = 0; i < free_list.size(); ++i){
+            size_t idx = (start+i) % free_list.size();
+            auto& person  = free_list[idx];
+            if (person.state != OrderState::Active){
+                continue;
+            }
+            result.push_back(idx);
+            
+            if (result.size() >= k) {
+                return result;
+            }
         }
     }
 

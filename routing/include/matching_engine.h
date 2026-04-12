@@ -133,10 +133,8 @@
         Location loc;
         double bid;
         int ext_id;
-        int h3_id;
-        int inbox_id;
         bool interesting = false;
-        FreeList<std::tuple<int, int, std::optional<double>>> inbox;
+        FreeList<std::tuple<int, int>> inbox;
         SwapList<std::tuple<int, int, double>> interested_drivers;
         OrderState state = OrderState::Active;
 
@@ -147,10 +145,7 @@
     struct Driver {
         Location loc;
         int ext_id;
-        int h3_id;
-        int inbox_id;
-        FreeList<std::tuple<int, int, double, std::optional<double>>> inbox;
-        SwapList<std::tuple<int, double>> interesting_riders;
+        FreeList<std::tuple<int, int>> inbox;
         OrderState state = OrderState::Active;
 
 
@@ -186,6 +181,9 @@
             FreeList<Driver> drivers_;
             SwapList<std::tuple<int, int>> interest_map_; 
 
+            size_t riders_cursor_ = 0;
+            size_t drivers_cursor_ = 0;
+
             
             // ankerl::unordered_dense::map<int, Driver> drivers_;
             ankerl::unordered_dense::map<H3Index, CellState> drivers_by_cell_;
@@ -204,7 +202,8 @@
             Location loc,
             ankerl::unordered_dense::map<H3Index, CellState>& cell_map,
             FreeListType& free_list,
-            size_t k);
+            size_t k,
+            size_t &cursor);
 
         
 
