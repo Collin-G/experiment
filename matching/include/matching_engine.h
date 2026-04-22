@@ -22,6 +22,16 @@
     };
 
     
+    struct AddResult {
+    int int_id;
+    int seq_no;
+};
+
+struct MatchResult {
+    int ext_rider_id;
+    int ext_driver_id;
+    double clearing_price;
+};
 
 
     enum class OrderState{
@@ -162,14 +172,14 @@
         public:
             // MatchingEngine();
             // ~MatchingEngine();
-            int add_rider(int ext_id, double bid, double lat, double lon, RiderMode mode);
-            int add_driver(int ext_id, double lat, double lon);
-            void cancel_rider(int ext_id, int sn);
-            void cancel_driver(int ext_id, int sn);
+            AddResult add_rider(int ext_id, double bid, double lat, double lon, RiderMode mode);
+            AddResult add_driver(int ext_id, double lat, double lon);
+            bool cancel_rider(int ext_id, int sn);
+            bool cancel_driver(int ext_id, int sn);
             
-            void instant_match(int ext_rider_id, int rsn, int ext_driver_id, int dsn);
+            std::optional<MatchResult> instant_match(int ext_rider_id, int rsn, int ext_driver_id, int dsn);
             void driver_interest(int ext_driver_id, int dsn, int ext_rider_id, int rsn, double ask);
-            void make_matches();
+            std::vector<MatchResult> make_matches();
             const FreeList<Driver>& get_drivers() const {
                 return drivers_;
             }

@@ -10,36 +10,20 @@
 
 
 
-int MatchingEngine::add_rider(int ext_rider_id, double bid, double lat, double lon, RiderMode mode) {
+AddResult MatchingEngine::add_rider(int ext_rider_id, double bid, double lat, double lon, RiderMode mode) {
     Location loc(lat, lon);
     Rider rider_item(ext_rider_id, bid, loc, mode);
-
-    
-
     int int_rider_id = riders_.allocate(rider_item);
-    Rider &rider = riders_[int_rider_id];
-    int r_seq_no = riders_.seq_no(int_rider_id);
-
-
     rider_ext_to_int[ext_rider_id] = int_rider_id;
-    return int_rider_id;
+    return {int_rider_id, riders_.seq_no(int_rider_id)};
 }
 
-
-int MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
+AddResult MatchingEngine::add_driver(int ext_driver_id, double lat, double lon) {
     Location loc(lat, lon);
     Driver driver_item(ext_driver_id, loc);
-
     int int_driver_id = drivers_.allocate(driver_item);
-    Driver &driver = drivers_[int_driver_id];
-    int d_seq_no = drivers_.seq_no(int_driver_id);
-
-
-   
-
     driver_ext_to_int[ext_driver_id] = int_driver_id;
-
-    return int_driver_id;
+    return {int_driver_id, drivers_.seq_no(int_driver_id)};
 }
 
 
@@ -85,27 +69,25 @@ void MatchingEngine::driver_interest(int ext_driver_id, int dsn, int ext_rider_i
 
 }
 
-void MatchingEngine::cancel_driver(int ext_driver_id, int sn){
-    auto it = driver_ext_to_int.find(ext_driver_id);
-    if (it == driver_ext_to_int.end()) {
-        return;
-    }
-    int driver_id = it->second;
-
-    if (sn != drivers_.seq_no(driver_id)) return;
-    drivers_[driver_id].state = OrderState::Canceled;
-    clean_driver(driver_id);
-}
-
-void MatchingEngine::cancel_rider(int ext_rider_id, int sn){
+// matching_engine.cpp
+bool MatchingEngine::cancel_rider(int ext_rider_id, int sn) {
     auto it = rider_ext_to_int.find(ext_rider_id);
-    if (it == rider_ext_to_int.end()) {
-        return;
-    }
+    if (it == rider_ext_to_int.end()) return false;
     int rider_id = it->second;
-    if (sn != riders_.seq_no(rider_id)) return;
+    if (sn != riders_.seq_no(rider_id)) return false;
     riders_[rider_id].state = OrderState::Canceled;
     clean_rider(rider_id);
+    return true;
+}
+
+bool MatchingEngine::cancel_driver(int ext_driver_id, int sn) {
+    auto it = driver_ext_to_int.find(ext_driver_id);
+    if (it == driver_ext_to_int.end()) return false;
+    int driver_id = it->second;
+    if (sn != drivers_.seq_no(driver_id)) return false;
+    drivers_[driver_id].state = OrderState::Canceled;
+    clean_driver(driver_id);
+    return true;
 }
 
 void MatchingEngine::clean_driver(int int_driver_id) {
@@ -119,89 +101,92 @@ void MatchingEngine::clean_rider(int int_rider_id) {
 }
 
 
-void MatchingEngine::make_matches() {
+// matching_engine.cpp
+std::vector<MatchResult> MatchingEngine::make_matches() {
+    std::vector<MatchResult> results;
 
-    for (size_t i = 0; i < interest_map_.size();){
+    for (size_t i = 0; i < interest_map_.size();) {
         auto& [id, seq_no] = interest_map_[i];
-        Rider &rider = riders_[id];
-        if (rider.state != OrderState::Active || seq_no != riders_.seq_no(id)){
+        Rider& rider = riders_[id];
+        if (rider.state != OrderState::Active || seq_no != riders_.seq_no(id)) {
             interest_map_.free(i);
             continue;
         }
 
         double bid = rider.bid;
-
         int best_driver = -1;
         int second_driver = -1;
         double best_ask = std::numeric_limits<double>::infinity();
         double second_ask = std::numeric_limits<double>::infinity();
 
-        for (size_t k = 0; k < rider.interested_drivers.size(); ++k){
+        for (size_t k = 0; k < rider.interested_drivers.size(); ++k) {
             int driver_id = std::get<0>(rider.interested_drivers[k]);
-            int d_seq_no = std::get<1>(rider.interested_drivers[k]);
-            if (drivers_[driver_id].state != OrderState::Active || d_seq_no != drivers_.seq_no(driver_id)) {
-                continue;
-            }
-            auto ask = std::get<2>(rider.interested_drivers[k]);
+            int d_seq_no  = std::get<1>(rider.interested_drivers[k]);
+            if (drivers_[driver_id].state != OrderState::Active ||
+                d_seq_no != drivers_.seq_no(driver_id)) continue;
 
+            auto ask = std::get<2>(rider.interested_drivers[k]);
             if (ask < best_ask) {
                 second_driver = best_driver;
-                second_ask = best_ask;
-
-                best_ask = ask;
-                best_driver = driver_id;
-            }
-            else if (ask < second_ask && ask >= best_ask) {
+                second_ask    = best_ask;
+                best_ask      = ask;
+                best_driver   = driver_id;
+            } else if (ask < second_ask) {
                 second_driver = driver_id;
-                second_ask = ask;
+                second_ask    = ask;
             }
         }
 
         if (best_driver != -1) {
-            
+            // second price auction clearing price
+            // if only one driver, they pay their own ask
+            // if multiple drivers, winner pays second lowest ask
+            double clearing = (second_ask == std::numeric_limits<double>::infinity())
+                ? best_ask
+                : second_ask;
+
+            results.push_back({
+                riders_[id].ext_id,
+                drivers_[best_driver].ext_id,
+                clearing
+            });
+
             match_pair(best_driver, id, best_ask, second_ask, bid);
             interest_map_.free(i);
-
-
-        }
-        else{
-            // rider.interesting = false;
+        } else {
             ++i;
         }
-        
     }
-    // interest_map_.clear();
 
+    return results;
 }
 
+// matching_engine.cpp
+std::optional<MatchResult> MatchingEngine::instant_match(
+    int ext_rider_id, int rsn, int ext_driver_id, int dsn) {
 
-void MatchingEngine::instant_match(int ext_rider_id, int rsn, int ext_driver_id, int dsn){
     auto r_it = rider_ext_to_int.find(ext_rider_id);
-    if (r_it == rider_ext_to_int.end()) {
-        return;
-    }
+    if (r_it == rider_ext_to_int.end()) return std::nullopt;
     int int_rider_id = r_it->second;
 
-
     auto d_it = driver_ext_to_int.find(ext_driver_id);
-    if (d_it == driver_ext_to_int.end()) {
-        return;
-    }
+    if (d_it == driver_ext_to_int.end()) return std::nullopt;
     int int_driver_id = d_it->second;
 
-    // interest_map_.push_back(rider);
     int d_seq_no = drivers_.seq_no(int_driver_id);
     int r_seq_no = riders_.seq_no(int_rider_id);
 
-    Driver &driver = drivers_[int_driver_id];
-    Rider &rider = riders_[int_rider_id];
+    Driver& driver = drivers_[int_driver_id];
+    Rider&  rider  = riders_[int_rider_id];
 
-    if (rider.mode != RiderMode::Instant) return;
-    if (driver.state != OrderState::Active || rider.state != OrderState::Active) return;
-    if (d_seq_no != dsn || r_seq_no != rsn) return;
+    if (rider.mode != RiderMode::Instant) return std::nullopt;
+    if (driver.state != OrderState::Active || rider.state != OrderState::Active) return std::nullopt;
+    if (d_seq_no != dsn || r_seq_no != rsn) return std::nullopt;
 
-    match_pair(int_driver_id, int_rider_id, rider.bid, rider.bid, rider.bid);
+    double price = rider.bid;
+    match_pair(int_driver_id, int_rider_id, price, price, price);
 
+    return MatchResult{ext_rider_id, ext_driver_id, price};
 }
 
 void MatchingEngine::match_pair(int driver_id, int rider_id, double best_ask, double second_ask, double bid){

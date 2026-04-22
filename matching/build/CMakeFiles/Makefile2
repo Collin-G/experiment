@@ -54,17 +54,17 @@ RM = /home/collin/.local/lib/python3.10/site-packages/cmake/data/bin/cmake -E rm
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/collin/programming/flux/routing
+CMAKE_SOURCE_DIR = /home/collin/programming/flux/matching
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/collin/programming/flux/routing/build
+CMAKE_BINARY_DIR = /home/collin/programming/flux/matching/build
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/routing.dir/all
-all: CMakeFiles/routing_cli.dir/all
+all: CMakeFiles/matching.dir/all
+all: CMakeFiles/matching_cli.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,61 +72,61 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/routing.dir/clean
-clean: CMakeFiles/routing_cli.dir/clean
+clean: CMakeFiles/matching.dir/clean
+clean: CMakeFiles/matching_cli.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/routing.dir
+# Target rules for target CMakeFiles/matching.dir
 
 # All Build rule for target.
-CMakeFiles/routing.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target routing"
-.PHONY : CMakeFiles/routing.dir/all
+CMakeFiles/matching.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=1,2,3,4 "Built target matching"
+.PHONY : CMakeFiles/matching.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/routing.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 8
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/routing.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 0
-.PHONY : CMakeFiles/routing.dir/rule
+CMakeFiles/matching.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/matching.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles 0
+.PHONY : CMakeFiles/matching.dir/rule
 
 # Convenience name for target.
-routing: CMakeFiles/routing.dir/rule
-.PHONY : routing
+matching: CMakeFiles/matching.dir/rule
+.PHONY : matching
 
 # clean rule for target.
-CMakeFiles/routing.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/clean
-.PHONY : CMakeFiles/routing.dir/clean
+CMakeFiles/matching.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/clean
+.PHONY : CMakeFiles/matching.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/routing_cli.dir
+# Target rules for target CMakeFiles/matching_cli.dir
 
 # All Build rule for target.
-CMakeFiles/routing_cli.dir/all: CMakeFiles/routing.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/routing/build/CMakeFiles --progress-num=9,10 "Built target routing_cli"
-.PHONY : CMakeFiles/routing_cli.dir/all
+CMakeFiles/matching_cli.dir/all: CMakeFiles/matching.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=5,6 "Built target matching_cli"
+.PHONY : CMakeFiles/matching_cli.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/routing_cli.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 10
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/routing_cli.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 0
-.PHONY : CMakeFiles/routing_cli.dir/rule
+CMakeFiles/matching_cli.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/matching_cli.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles 0
+.PHONY : CMakeFiles/matching_cli.dir/rule
 
 # Convenience name for target.
-routing_cli: CMakeFiles/routing_cli.dir/rule
-.PHONY : routing_cli
+matching_cli: CMakeFiles/matching_cli.dir/rule
+.PHONY : matching_cli
 
 # clean rule for target.
-CMakeFiles/routing_cli.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/clean
-.PHONY : CMakeFiles/routing_cli.dir/clean
+CMakeFiles/matching_cli.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/clean
+.PHONY : CMakeFiles/matching_cli.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

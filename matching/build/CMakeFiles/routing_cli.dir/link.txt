@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/routing_cli.dir/src/main.cpp.o -o routing_cli  librouting.a /usr/lib/x86_64-linux-gnu/libcurl.so -lpthread /usr/local/lib/libh3.a /usr/lib/x86_64-linux-gnu/libcurl.so -lbz2 -lboost_system -lboost_iostreams -lboost_date_time -lz -lexpat -lpthread

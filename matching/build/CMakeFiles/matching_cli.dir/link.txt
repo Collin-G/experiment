@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/matching_cli.dir/src/main.cpp.o -o matching_cli  libmatching.a -lpthread /usr/local/lib/libh3.a /usr/lib/x86_64-linux-gnu/librdkafka.so /usr/lib/x86_64-linux-gnu/librdkafka++.so -lpthread

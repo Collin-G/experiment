@@ -57,10 +57,10 @@ RM = /home/collin/.local/lib/python3.10/site-packages/cmake/data/bin/cmake -E rm
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/collin/programming/flux/routing
+CMAKE_SOURCE_DIR = /home/collin/programming/flux/matching
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/collin/programming/flux/routing/build
+CMAKE_BINARY_DIR = /home/collin/programming/flux/matching/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles /home/collin/programming/flux/routing/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles /home/collin/programming/flux/matching/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/routing/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/collin/programming/flux/matching/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,109 +117,85 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named routing
+# Target rules for targets named matching
 
 # Build rule for target.
-routing: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 routing
-.PHONY : routing
+matching: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 matching
+.PHONY : matching
 
 # fast build rule for target.
-routing/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/build
-.PHONY : routing/fast
+matching/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/build
+.PHONY : matching/fast
 
 #=============================================================================
-# Target rules for targets named routing_cli
+# Target rules for targets named matching_cli
 
 # Build rule for target.
-routing_cli: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 routing_cli
-.PHONY : routing_cli
+matching_cli: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 matching_cli
+.PHONY : matching_cli
 
 # fast build rule for target.
-routing_cli/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/build
-.PHONY : routing_cli/fast
+matching_cli/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/build
+.PHONY : matching_cli/fast
 
-src/astar.o: src/astar.cpp.o
-.PHONY : src/astar.o
-
-# target to build an object file
-src/astar.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/astar.cpp.o
-.PHONY : src/astar.cpp.o
-
-src/astar.i: src/astar.cpp.i
-.PHONY : src/astar.i
-
-# target to preprocess a source file
-src/astar.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/astar.cpp.i
-.PHONY : src/astar.cpp.i
-
-src/astar.s: src/astar.cpp.s
-.PHONY : src/astar.s
-
-# target to generate assembly for a file
-src/astar.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/astar.cpp.s
-.PHONY : src/astar.cpp.s
-
-src/graph.o: src/graph.cpp.o
-.PHONY : src/graph.o
+src/kafka_consumer.o: src/kafka_consumer.cpp.o
+.PHONY : src/kafka_consumer.o
 
 # target to build an object file
-src/graph.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graph.cpp.o
-.PHONY : src/graph.cpp.o
+src/kafka_consumer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.o
+.PHONY : src/kafka_consumer.cpp.o
 
-src/graph.i: src/graph.cpp.i
-.PHONY : src/graph.i
+src/kafka_consumer.i: src/kafka_consumer.cpp.i
+.PHONY : src/kafka_consumer.i
 
 # target to preprocess a source file
-src/graph.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graph.cpp.i
-.PHONY : src/graph.cpp.i
+src/kafka_consumer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.i
+.PHONY : src/kafka_consumer.cpp.i
 
-src/graph.s: src/graph.cpp.s
-.PHONY : src/graph.s
+src/kafka_consumer.s: src/kafka_consumer.cpp.s
+.PHONY : src/kafka_consumer.s
 
 # target to generate assembly for a file
-src/graph.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graph.cpp.s
-.PHONY : src/graph.cpp.s
+src/kafka_consumer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.s
+.PHONY : src/kafka_consumer.cpp.s
 
-src/graphbuilder.o: src/graphbuilder.cpp.o
-.PHONY : src/graphbuilder.o
+src/kafka_producer.o: src/kafka_producer.cpp.o
+.PHONY : src/kafka_producer.o
 
 # target to build an object file
-src/graphbuilder.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graphbuilder.cpp.o
-.PHONY : src/graphbuilder.cpp.o
+src/kafka_producer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.o
+.PHONY : src/kafka_producer.cpp.o
 
-src/graphbuilder.i: src/graphbuilder.cpp.i
-.PHONY : src/graphbuilder.i
+src/kafka_producer.i: src/kafka_producer.cpp.i
+.PHONY : src/kafka_producer.i
 
 # target to preprocess a source file
-src/graphbuilder.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graphbuilder.cpp.i
-.PHONY : src/graphbuilder.cpp.i
+src/kafka_producer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.i
+.PHONY : src/kafka_producer.cpp.i
 
-src/graphbuilder.s: src/graphbuilder.cpp.s
-.PHONY : src/graphbuilder.s
+src/kafka_producer.s: src/kafka_producer.cpp.s
+.PHONY : src/kafka_producer.s
 
 # target to generate assembly for a file
-src/graphbuilder.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/graphbuilder.cpp.s
-.PHONY : src/graphbuilder.cpp.s
+src/kafka_producer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.s
+.PHONY : src/kafka_producer.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -227,7 +203,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -235,7 +211,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing_cli.dir/build.make CMakeFiles/routing_cli.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/matching_engine.o: src/matching_engine.cpp.o
@@ -243,7 +219,7 @@ src/matching_engine.o: src/matching_engine.cpp.o
 
 # target to build an object file
 src/matching_engine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching_engine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.o
 .PHONY : src/matching_engine.cpp.o
 
 src/matching_engine.i: src/matching_engine.cpp.i
@@ -251,7 +227,7 @@ src/matching_engine.i: src/matching_engine.cpp.i
 
 # target to preprocess a source file
 src/matching_engine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching_engine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.i
 .PHONY : src/matching_engine.cpp.i
 
 src/matching_engine.s: src/matching_engine.cpp.s
@@ -259,80 +235,8 @@ src/matching_engine.s: src/matching_engine.cpp.s
 
 # target to generate assembly for a file
 src/matching_engine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/matching_engine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.s
 .PHONY : src/matching_engine.cpp.s
-
-src/osm_parser.o: src/osm_parser.cpp.o
-.PHONY : src/osm_parser.o
-
-# target to build an object file
-src/osm_parser.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/osm_parser.cpp.o
-.PHONY : src/osm_parser.cpp.o
-
-src/osm_parser.i: src/osm_parser.cpp.i
-.PHONY : src/osm_parser.i
-
-# target to preprocess a source file
-src/osm_parser.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/osm_parser.cpp.i
-.PHONY : src/osm_parser.cpp.i
-
-src/osm_parser.s: src/osm_parser.cpp.s
-.PHONY : src/osm_parser.s
-
-# target to generate assembly for a file
-src/osm_parser.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/osm_parser.cpp.s
-.PHONY : src/osm_parser.cpp.s
-
-src/router.o: src/router.cpp.o
-.PHONY : src/router.o
-
-# target to build an object file
-src/router.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router.cpp.o
-.PHONY : src/router.cpp.o
-
-src/router.i: src/router.cpp.i
-.PHONY : src/router.i
-
-# target to preprocess a source file
-src/router.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router.cpp.i
-.PHONY : src/router.cpp.i
-
-src/router.s: src/router.cpp.s
-.PHONY : src/router.s
-
-# target to generate assembly for a file
-src/router.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router.cpp.s
-.PHONY : src/router.cpp.s
-
-src/router_api.o: src/router_api.cpp.o
-.PHONY : src/router_api.o
-
-# target to build an object file
-src/router_api.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router_api.cpp.o
-.PHONY : src/router_api.cpp.o
-
-src/router_api.i: src/router_api.cpp.i
-.PHONY : src/router_api.i
-
-# target to preprocess a source file
-src/router_api.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router_api.cpp.i
-.PHONY : src/router_api.cpp.i
-
-src/router_api.s: src/router_api.cpp.s
-.PHONY : src/router_api.s
-
-# target to generate assembly for a file
-src/router_api.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/routing.dir/build.make CMakeFiles/routing.dir/src/router_api.cpp.s
-.PHONY : src/router_api.cpp.s
 
 # Help Target
 help:
@@ -342,32 +246,20 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... routing"
-	@echo "... routing_cli"
-	@echo "... src/astar.o"
-	@echo "... src/astar.i"
-	@echo "... src/astar.s"
-	@echo "... src/graph.o"
-	@echo "... src/graph.i"
-	@echo "... src/graph.s"
-	@echo "... src/graphbuilder.o"
-	@echo "... src/graphbuilder.i"
-	@echo "... src/graphbuilder.s"
+	@echo "... matching"
+	@echo "... matching_cli"
+	@echo "... src/kafka_consumer.o"
+	@echo "... src/kafka_consumer.i"
+	@echo "... src/kafka_consumer.s"
+	@echo "... src/kafka_producer.o"
+	@echo "... src/kafka_producer.i"
+	@echo "... src/kafka_producer.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/matching_engine.o"
 	@echo "... src/matching_engine.i"
 	@echo "... src/matching_engine.s"
-	@echo "... src/osm_parser.o"
-	@echo "... src/osm_parser.i"
-	@echo "... src/osm_parser.s"
-	@echo "... src/router.o"
-	@echo "... src/router.i"
-	@echo "... src/router.s"
-	@echo "... src/router_api.o"
-	@echo "... src/router_api.i"
-	@echo "... src/router_api.s"
 .PHONY : help
 
 

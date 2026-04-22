@@ -1,4 +1,4 @@
-# Install script for directory: /home/collin/programming/flux/routing
+# Install script for directory: /home/collin/programming/flux/matching
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -57,6 +57,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-  file(WRITE "/home/collin/programming/flux/routing/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "/home/collin/programming/flux/matching/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
