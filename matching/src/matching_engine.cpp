@@ -161,16 +161,21 @@ std::vector<MatchResult> MatchingEngine::make_matches() {
     return results;
 }
 
-// matching_engine.cpp
 std::optional<MatchResult> MatchingEngine::instant_match(
     int ext_rider_id, int rsn, int ext_driver_id, int dsn) {
 
     auto r_it = rider_ext_to_int.find(ext_rider_id);
-    if (r_it == rider_ext_to_int.end()) return std::nullopt;
+    if (r_it == rider_ext_to_int.end()) {
+        fprintf(stderr, "instant_match: rider %d not found\n", ext_rider_id);
+        return std::nullopt;
+    }
     int int_rider_id = r_it->second;
 
     auto d_it = driver_ext_to_int.find(ext_driver_id);
-    if (d_it == driver_ext_to_int.end()) return std::nullopt;
+    if (d_it == driver_ext_to_int.end()) {
+        fprintf(stderr, "instant_match: driver %d not found\n", ext_driver_id);
+        return std::nullopt;
+    }
     int int_driver_id = d_it->second;
 
     int d_seq_no = drivers_.seq_no(int_driver_id);
@@ -179,13 +184,22 @@ std::optional<MatchResult> MatchingEngine::instant_match(
     Driver& driver = drivers_[int_driver_id];
     Rider&  rider  = riders_[int_rider_id];
 
-    if (rider.mode != RiderMode::Instant) return std::nullopt;
-    if (driver.state != OrderState::Active || rider.state != OrderState::Active) return std::nullopt;
-    if (d_seq_no != dsn || r_seq_no != rsn) return std::nullopt;
+    if (rider.mode != RiderMode::Instant) {
+        fprintf(stderr, "instant_match: rider %d is not in instant mode\n", ext_rider_id);
+        return std::nullopt;
+    }
+    if (driver.state != OrderState::Active || rider.state != OrderState::Active) {
+        fprintf(stderr, "instant_match: driver or rider not active\n");
+        return std::nullopt;
+    }
+    if (d_seq_no != dsn || r_seq_no != rsn) {
+        fprintf(stderr, "instant_match: seq_no mismatch. driver expected %d got %d, rider expected %d got %d\n",
+            dsn, d_seq_no, rsn, r_seq_no);
+        return std::nullopt;
+    }
 
     double price = rider.bid;
     match_pair(int_driver_id, int_rider_id, price, price, price);
-
     return MatchResult{ext_rider_id, ext_driver_id, price};
 }
 
