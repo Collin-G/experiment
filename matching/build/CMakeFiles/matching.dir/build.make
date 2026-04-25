@@ -69,60 +69,60 @@ include CMakeFiles/matching.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/matching.dir/flags.make
 
-CMakeFiles/matching.dir/src/matching_engine.cpp.o: CMakeFiles/matching.dir/flags.make
-CMakeFiles/matching.dir/src/matching_engine.cpp.o: /home/collin/programming/flux/matching/src/matching_engine.cpp
-CMakeFiles/matching.dir/src/matching_engine.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/matching.dir/src/matching_engine.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/matching_engine.cpp.o -MF CMakeFiles/matching.dir/src/matching_engine.cpp.o.d -o CMakeFiles/matching.dir/src/matching_engine.cpp.o -c /home/collin/programming/flux/matching/src/matching_engine.cpp
+CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o: CMakeFiles/matching.dir/flags.make
+CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o: /home/collin/programming/flux/matching/src/engine/matching_engine.cpp
+CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o -MF CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o.d -o CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o -c /home/collin/programming/flux/matching/src/engine/matching_engine.cpp
 
-CMakeFiles/matching.dir/src/matching_engine.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/matching_engine.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/matching_engine.cpp > CMakeFiles/matching.dir/src/matching_engine.cpp.i
+CMakeFiles/matching.dir/src/engine/matching_engine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/engine/matching_engine.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/engine/matching_engine.cpp > CMakeFiles/matching.dir/src/engine/matching_engine.cpp.i
 
-CMakeFiles/matching.dir/src/matching_engine.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/matching_engine.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/matching_engine.cpp -o CMakeFiles/matching.dir/src/matching_engine.cpp.s
+CMakeFiles/matching.dir/src/engine/matching_engine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/engine/matching_engine.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/engine/matching_engine.cpp -o CMakeFiles/matching.dir/src/engine/matching_engine.cpp.s
 
-CMakeFiles/matching.dir/src/kafka_producer.cpp.o: CMakeFiles/matching.dir/flags.make
-CMakeFiles/matching.dir/src/kafka_producer.cpp.o: /home/collin/programming/flux/matching/src/kafka_producer.cpp
-CMakeFiles/matching.dir/src/kafka_producer.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/matching.dir/src/kafka_producer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/kafka_producer.cpp.o -MF CMakeFiles/matching.dir/src/kafka_producer.cpp.o.d -o CMakeFiles/matching.dir/src/kafka_producer.cpp.o -c /home/collin/programming/flux/matching/src/kafka_producer.cpp
+CMakeFiles/matching.dir/src/threads.cpp.o: CMakeFiles/matching.dir/flags.make
+CMakeFiles/matching.dir/src/threads.cpp.o: /home/collin/programming/flux/matching/src/threads.cpp
+CMakeFiles/matching.dir/src/threads.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/matching.dir/src/threads.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/threads.cpp.o -MF CMakeFiles/matching.dir/src/threads.cpp.o.d -o CMakeFiles/matching.dir/src/threads.cpp.o -c /home/collin/programming/flux/matching/src/threads.cpp
 
-CMakeFiles/matching.dir/src/kafka_producer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/kafka_producer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/kafka_producer.cpp > CMakeFiles/matching.dir/src/kafka_producer.cpp.i
+CMakeFiles/matching.dir/src/threads.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/threads.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/threads.cpp > CMakeFiles/matching.dir/src/threads.cpp.i
 
-CMakeFiles/matching.dir/src/kafka_producer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/kafka_producer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/kafka_producer.cpp -o CMakeFiles/matching.dir/src/kafka_producer.cpp.s
+CMakeFiles/matching.dir/src/threads.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/threads.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/threads.cpp -o CMakeFiles/matching.dir/src/threads.cpp.s
 
-CMakeFiles/matching.dir/src/kafka_consumer.cpp.o: CMakeFiles/matching.dir/flags.make
-CMakeFiles/matching.dir/src/kafka_consumer.cpp.o: /home/collin/programming/flux/matching/src/kafka_consumer.cpp
-CMakeFiles/matching.dir/src/kafka_consumer.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/matching.dir/src/kafka_consumer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/kafka_consumer.cpp.o -MF CMakeFiles/matching.dir/src/kafka_consumer.cpp.o.d -o CMakeFiles/matching.dir/src/kafka_consumer.cpp.o -c /home/collin/programming/flux/matching/src/kafka_consumer.cpp
+CMakeFiles/matching.dir/src/events/json_utils.cpp.o: CMakeFiles/matching.dir/flags.make
+CMakeFiles/matching.dir/src/events/json_utils.cpp.o: /home/collin/programming/flux/matching/src/events/json_utils.cpp
+CMakeFiles/matching.dir/src/events/json_utils.cpp.o: CMakeFiles/matching.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/matching.dir/src/events/json_utils.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/matching.dir/src/events/json_utils.cpp.o -MF CMakeFiles/matching.dir/src/events/json_utils.cpp.o.d -o CMakeFiles/matching.dir/src/events/json_utils.cpp.o -c /home/collin/programming/flux/matching/src/events/json_utils.cpp
 
-CMakeFiles/matching.dir/src/kafka_consumer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/kafka_consumer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/kafka_consumer.cpp > CMakeFiles/matching.dir/src/kafka_consumer.cpp.i
+CMakeFiles/matching.dir/src/events/json_utils.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/matching.dir/src/events/json_utils.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/collin/programming/flux/matching/src/events/json_utils.cpp > CMakeFiles/matching.dir/src/events/json_utils.cpp.i
 
-CMakeFiles/matching.dir/src/kafka_consumer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/kafka_consumer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/kafka_consumer.cpp -o CMakeFiles/matching.dir/src/kafka_consumer.cpp.s
+CMakeFiles/matching.dir/src/events/json_utils.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/matching.dir/src/events/json_utils.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/collin/programming/flux/matching/src/events/json_utils.cpp -o CMakeFiles/matching.dir/src/events/json_utils.cpp.s
 
 # Object files for target matching
 matching_OBJECTS = \
-"CMakeFiles/matching.dir/src/matching_engine.cpp.o" \
-"CMakeFiles/matching.dir/src/kafka_producer.cpp.o" \
-"CMakeFiles/matching.dir/src/kafka_consumer.cpp.o"
+"CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o" \
+"CMakeFiles/matching.dir/src/threads.cpp.o" \
+"CMakeFiles/matching.dir/src/events/json_utils.cpp.o"
 
 # External object files for target matching
 matching_EXTERNAL_OBJECTS =
 
-libmatching.a: CMakeFiles/matching.dir/src/matching_engine.cpp.o
-libmatching.a: CMakeFiles/matching.dir/src/kafka_producer.cpp.o
-libmatching.a: CMakeFiles/matching.dir/src/kafka_consumer.cpp.o
+libmatching.a: CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o
+libmatching.a: CMakeFiles/matching.dir/src/threads.cpp.o
+libmatching.a: CMakeFiles/matching.dir/src/events/json_utils.cpp.o
 libmatching.a: CMakeFiles/matching.dir/build.make
 libmatching.a: CMakeFiles/matching.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/collin/programming/flux/matching/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libmatching.a"

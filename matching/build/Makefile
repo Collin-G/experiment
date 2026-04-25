@@ -142,53 +142,53 @@ matching_cli/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/build
 .PHONY : matching_cli/fast
 
-src/kafka_consumer.o: src/kafka_consumer.cpp.o
-.PHONY : src/kafka_consumer.o
+src/engine/matching_engine.o: src/engine/matching_engine.cpp.o
+.PHONY : src/engine/matching_engine.o
 
 # target to build an object file
-src/kafka_consumer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.o
-.PHONY : src/kafka_consumer.cpp.o
+src/engine/matching_engine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o
+.PHONY : src/engine/matching_engine.cpp.o
 
-src/kafka_consumer.i: src/kafka_consumer.cpp.i
-.PHONY : src/kafka_consumer.i
+src/engine/matching_engine.i: src/engine/matching_engine.cpp.i
+.PHONY : src/engine/matching_engine.i
 
 # target to preprocess a source file
-src/kafka_consumer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.i
-.PHONY : src/kafka_consumer.cpp.i
+src/engine/matching_engine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/engine/matching_engine.cpp.i
+.PHONY : src/engine/matching_engine.cpp.i
 
-src/kafka_consumer.s: src/kafka_consumer.cpp.s
-.PHONY : src/kafka_consumer.s
+src/engine/matching_engine.s: src/engine/matching_engine.cpp.s
+.PHONY : src/engine/matching_engine.s
 
 # target to generate assembly for a file
-src/kafka_consumer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_consumer.cpp.s
-.PHONY : src/kafka_consumer.cpp.s
+src/engine/matching_engine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/engine/matching_engine.cpp.s
+.PHONY : src/engine/matching_engine.cpp.s
 
-src/kafka_producer.o: src/kafka_producer.cpp.o
-.PHONY : src/kafka_producer.o
+src/events/json_utils.o: src/events/json_utils.cpp.o
+.PHONY : src/events/json_utils.o
 
 # target to build an object file
-src/kafka_producer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.o
-.PHONY : src/kafka_producer.cpp.o
+src/events/json_utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/events/json_utils.cpp.o
+.PHONY : src/events/json_utils.cpp.o
 
-src/kafka_producer.i: src/kafka_producer.cpp.i
-.PHONY : src/kafka_producer.i
+src/events/json_utils.i: src/events/json_utils.cpp.i
+.PHONY : src/events/json_utils.i
 
 # target to preprocess a source file
-src/kafka_producer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.i
-.PHONY : src/kafka_producer.cpp.i
+src/events/json_utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/events/json_utils.cpp.i
+.PHONY : src/events/json_utils.cpp.i
 
-src/kafka_producer.s: src/kafka_producer.cpp.s
-.PHONY : src/kafka_producer.s
+src/events/json_utils.s: src/events/json_utils.cpp.s
+.PHONY : src/events/json_utils.s
 
 # target to generate assembly for a file
-src/kafka_producer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/kafka_producer.cpp.s
-.PHONY : src/kafka_producer.cpp.s
+src/events/json_utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/events/json_utils.cpp.s
+.PHONY : src/events/json_utils.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -214,29 +214,29 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching_cli.dir/build.make CMakeFiles/matching_cli.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-src/matching_engine.o: src/matching_engine.cpp.o
-.PHONY : src/matching_engine.o
+src/threads.o: src/threads.cpp.o
+.PHONY : src/threads.o
 
 # target to build an object file
-src/matching_engine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.o
-.PHONY : src/matching_engine.cpp.o
+src/threads.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/threads.cpp.o
+.PHONY : src/threads.cpp.o
 
-src/matching_engine.i: src/matching_engine.cpp.i
-.PHONY : src/matching_engine.i
+src/threads.i: src/threads.cpp.i
+.PHONY : src/threads.i
 
 # target to preprocess a source file
-src/matching_engine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.i
-.PHONY : src/matching_engine.cpp.i
+src/threads.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/threads.cpp.i
+.PHONY : src/threads.cpp.i
 
-src/matching_engine.s: src/matching_engine.cpp.s
-.PHONY : src/matching_engine.s
+src/threads.s: src/threads.cpp.s
+.PHONY : src/threads.s
 
 # target to generate assembly for a file
-src/matching_engine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/matching_engine.cpp.s
-.PHONY : src/matching_engine.cpp.s
+src/threads.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matching.dir/build.make CMakeFiles/matching.dir/src/threads.cpp.s
+.PHONY : src/threads.cpp.s
 
 # Help Target
 help:
@@ -248,18 +248,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... matching"
 	@echo "... matching_cli"
-	@echo "... src/kafka_consumer.o"
-	@echo "... src/kafka_consumer.i"
-	@echo "... src/kafka_consumer.s"
-	@echo "... src/kafka_producer.o"
-	@echo "... src/kafka_producer.i"
-	@echo "... src/kafka_producer.s"
+	@echo "... src/engine/matching_engine.o"
+	@echo "... src/engine/matching_engine.i"
+	@echo "... src/engine/matching_engine.s"
+	@echo "... src/events/json_utils.o"
+	@echo "... src/events/json_utils.i"
+	@echo "... src/events/json_utils.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/matching_engine.o"
-	@echo "... src/matching_engine.i"
-	@echo "... src/matching_engine.s"
+	@echo "... src/threads.o"
+	@echo "... src/threads.i"
+	@echo "... src/threads.s"
 .PHONY : help
 
 

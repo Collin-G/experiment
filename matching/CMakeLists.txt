@@ -27,9 +27,9 @@ endif()
 
 # ── matching library ──────────────────────────────────────────────────────────
 add_library(matching STATIC
-    src/matching_engine.cpp
-    src/kafka_producer.cpp
-    src/kafka_consumer.cpp
+    src/engine/matching_engine.cpp
+    src/threads.cpp
+    src/events/json_utils.cpp
 )
 
 target_include_directories(matching

@@ -1,6 +1,9 @@
     #pragma once
 
-    #include <unordered_map>
+
+    #include "engine/freelist.h"
+    #include "engine/swaplist.h"
+
     #include <optional>
     #include <tuple>
     #include <vector>
@@ -46,96 +49,8 @@ struct MatchResult {
     };
 
 
-    template<typename T>
-    class FreeList {
-        private:
-            std::vector<T> pool;
-            std::vector<int> free_list;
-            std::vector<int> seq_nos;
-            size_t active_count = 0;
-        
-        public:
 
-            int allocate (const T &item){
-                ++active_count;
-                if (!free_list.empty()){
-                    int idx = free_list.back();
-                    free_list.pop_back();
-                    pool[idx] = item;            
-                    return idx;             
-                }
-
-                else{
-                    pool.push_back(item);
-                    seq_nos.push_back(0);
-                    return pool.size()-1;
-                }
-            }
-
-            void free(int idx){
-                free_list.push_back(idx);
-                ++seq_nos[idx]; 
-                --active_count;
-            }
-
-            T& operator[](int idx){
-                return pool[idx];
-            }
-
-            const T& operator[](int idx) const {
-            return pool[idx];
-            }
-
-            int seq_no(int idx) const{
-                return seq_nos[idx];
-            }
-
-            size_t active_size() const {return active_count;}
-            size_t size() const { return pool.size(); }
-    };
-
-
-    template<typename T>
-    class SwapList{
-        private:
-            std::vector<T> pool;
-
-        public:
-            T& operator[](int idx) {
-                return pool[idx];
-            }
-
-            const T& operator[](int idx) const {
-                return pool[idx];
-            }
-
-            void push_back(const T& item){
-                pool.push_back(item);
-            }
-
-            void free(int idx){
-                T& temp = pool[idx];
-                pool[idx] = pool[pool.size()-1];
-                pool.pop_back();
-            }
-
-            T& front(){
-                return pool.front();
-            }
-
-            void clear(){
-                pool.clear();
-            }
-
-            bool empty(){
-                return pool.empty();
-            }
-
-       
-            size_t size() const { return pool.size(); }
-
-     };
-
+    
 
 
     struct CellState {

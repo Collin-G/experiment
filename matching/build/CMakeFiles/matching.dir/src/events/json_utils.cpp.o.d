@@ -1,5 +1,5 @@
-CMakeFiles/matching_cli.dir/src/main.cpp.o: \
- /home/collin/programming/flux/matching/src/main.cpp \
+CMakeFiles/matching.dir/src/events/json_utils.cpp.o: \
+ /home/collin/programming/flux/matching/src/events/json_utils.cpp \
  /usr/include/stdc-predef.h \
  /home/collin/programming/flux/matching/include/engine/matching_engine.h \
  /home/collin/programming/flux/matching/include/engine/freelist.h \
@@ -238,6 +238,7 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
  /home/collin/programming/flux/matching/include/globals.h \
  /home/collin/programming/flux/matching/include/threads.h \
+ /home/collin/programming/flux/matching/include/events/json_utils.h \
  /usr/include/nlohmann/json.hpp /usr/include/c++/11/algorithm \
  /usr/include/c++/11/pstl/glue_algorithm_defs.h \
  /usr/include/c++/11/numeric /usr/include/c++/11/bits/stl_numeric.h \

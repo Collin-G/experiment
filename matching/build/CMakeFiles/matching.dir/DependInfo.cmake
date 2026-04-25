@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/collin/programming/flux/matching/src/kafka_consumer.cpp" "CMakeFiles/matching.dir/src/kafka_consumer.cpp.o" "gcc" "CMakeFiles/matching.dir/src/kafka_consumer.cpp.o.d"
-  "/home/collin/programming/flux/matching/src/kafka_producer.cpp" "CMakeFiles/matching.dir/src/kafka_producer.cpp.o" "gcc" "CMakeFiles/matching.dir/src/kafka_producer.cpp.o.d"
-  "/home/collin/programming/flux/matching/src/matching_engine.cpp" "CMakeFiles/matching.dir/src/matching_engine.cpp.o" "gcc" "CMakeFiles/matching.dir/src/matching_engine.cpp.o.d"
+  "/home/collin/programming/flux/matching/src/engine/matching_engine.cpp" "CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o" "gcc" "CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o.d"
+  "/home/collin/programming/flux/matching/src/events/json_utils.cpp" "CMakeFiles/matching.dir/src/events/json_utils.cpp.o" "gcc" "CMakeFiles/matching.dir/src/events/json_utils.cpp.o.d"
+  "/home/collin/programming/flux/matching/src/threads.cpp" "CMakeFiles/matching.dir/src/threads.cpp.o" "gcc" "CMakeFiles/matching.dir/src/threads.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

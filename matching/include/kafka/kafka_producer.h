@@ -1,3 +1,4 @@
+#pragma once
 #include <librdkafka/rdkafkacpp.h>
 #include <string>
 #include <stdexcept>
