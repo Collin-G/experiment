@@ -17,9 +17,14 @@ void pin_to_core(int core) {
 
 // ── thread 1 — kafka consumer ─────────────────────────────────────────────────
 // polls kafka, parses json, pushes EngineCommands into in_queue
-void consumer_thread(SPSCQueue<EngineCommand, 65536>& in_queue) {
+void consumer_thread(SPSCQueue<EngineCommand, 65536>& in_queue, int shard_id) {
     pin_to_core(0);
-    KafkaConsumer consumer("localhost:9092", "shard-0-worker", "shard-0-commands");
+
+
+    std::string topic = "commands";
+
+    KafkaConsumer consumer("localhost:9092", "engine-group", topic);
+    consumer.assign_partition(shard_id);
 
     while (running) {
         auto raw = consumer.poll(5);
@@ -39,7 +44,7 @@ void consumer_thread(SPSCQueue<EngineCommand, 65536>& in_queue) {
 // ── thread 2 — engine ─────────────────────────────────────────────────────────
 // drains in_queue, calls engine, pushes EngineEvents into out_queue
 void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
-                   SPSCQueue<EngineEvent,   65536>& out_queue) {
+                   SPSCQueue<EngineEvent,   65536>& out_queue, int shard_id) {
     pin_to_core(1);
     MatchingEngine engine;
     auto last_match = std::chrono::steady_clock::now();
@@ -62,7 +67,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
                         cmd->add_rider.mode
                     );
                     ev.type = EngineEvent::Type::RIDER_ADDED;
-                    ev.added_participant = {cmd->add_rider.ext_id, r.seq_no};
+                    ev.added_participant = {cmd->add_rider.ext_id, r.seq_no, shard_id, cmd->add_rider.lat, cmd->add_rider.lon};
                     push(ev);
                     break;
                 }
@@ -74,7 +79,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
                         cmd->add_driver.lon
                     );
                     ev.type = EngineEvent::Type::DRIVER_ADDED;
-                    ev.added_participant = {cmd->add_driver.ext_id, r.seq_no};
+                    ev.added_participant = {cmd->add_driver.ext_id, r.seq_no, shard_id, cmd->add_driver.lat, cmd->add_rider.lon};
                     push(ev);
                     break;
                 }
@@ -94,7 +99,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
                     );
                     if (r) {
                         ev.type = EngineEvent::Type::MATCHED;
-                        ev.matched_participant = {r->ext_rider_id, r->ext_driver_id, r->clearing_price};
+                        ev.matched_participant = {r->ext_rider_id, r->ext_driver_id, r->clearing_price, shard_id};
                         push(ev);
                     }
                     break;
@@ -106,7 +111,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
                     );
                     if (ok) {
                         ev.type = EngineEvent::Type::RIDER_CANCELED;
-                        ev.canceled_participant = {cmd->cancel.ext_id};
+                        ev.canceled_participant = {cmd->cancel.ext_id, shard_id};
                         push(ev);
                     }
                     break;
@@ -118,7 +123,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
                     );
                     if (ok) {
                         ev.type = EngineEvent::Type::DRIVER_CANCELED;
-                        ev.canceled_participant = {cmd->cancel.ext_id};
+                        ev.canceled_participant = {cmd->cancel.ext_id, shard_id};
                         push(ev);
                     }
                     break;
@@ -135,7 +140,7 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
             for (auto& r : results) {
                 EngineEvent ev;
                 ev.type = EngineEvent::Type::MATCHED;
-                ev.matched_participant = {r.ext_rider_id, r.ext_driver_id, r.clearing_price};
+                ev.matched_participant = {r.ext_rider_id, r.ext_driver_id, r.clearing_price, shard_id};
                 push(ev);
             }
             last_match = now;
@@ -149,9 +154,9 @@ void engine_thread(SPSCQueue<EngineCommand, 65536>& in_queue,
 
 // ── thread 3 — kafka producer ─────────────────────────────────────────────────
 // drains out_queue, serializes events, produces to kafka
-void producer_thread(SPSCQueue<EngineEvent, 65536>& out_queue) {
+void producer_thread(SPSCQueue<EngineEvent, 65536>& out_queue, int shard_id) {
     pin_to_core(2);
-    KafkaProducer producer("localhost:9092", "shard-0-events");
+    KafkaProducer producer("localhost:9092", "events", shard_id);
 
     while (running) {
         bool produced_any = false;

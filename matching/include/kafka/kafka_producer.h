@@ -6,8 +6,8 @@
 
 class KafkaProducer {
 public:
-    KafkaProducer(const std::string& brokers, const std::string& topic)
-        : topic_(topic) {
+    KafkaProducer(const std::string& brokers, const std::string& topic, int shard_id)
+        : topic_(topic) , shard_id_ (shard_id){
 
         std::string errstr;
 
@@ -38,32 +38,24 @@ public:
     }
 
     void produce(const std::string& payload) {
+        int partition = shard_id_;
         RdKafka::ErrorCode err = producer_->produce(
             topic_,
-            RdKafka::Topic::PARTITION_UA,    // UA = unassigned, let kafka pick
-            RdKafka::Producer::RK_MSG_COPY,  // kafka makes its own copy of payload
+            partition,                         // explicit partition
+            RdKafka::Producer::RK_MSG_COPY,
             const_cast<char*>(payload.c_str()),
             payload.size(),
-            nullptr,  // no key
-            0,
-            0,        // timestamp, 0 = use current time
-            nullptr   // no opaque pointer
+            nullptr, 0, 0, nullptr
         );
-
         if (err != RdKafka::ERR_NO_ERROR) {
             throw std::runtime_error("produce failed: " + RdKafka::err2str(err));
         }
-
-        // librdkafka batches messages internally for throughput
-        // it doesn't send immediately — it buffers and sends in batches
-        // poll(0) gives it a chance to process delivery confirmations
-        // without blocking — non-blocking check
         producer_->poll(0);
     }
 
-    void poll(int timeout_ms) {
-    producer_->poll(timeout_ms);
-}
+        void poll(int timeout_ms) {
+        producer_->poll(timeout_ms);
+    }
 
     void flush() {
         // on shutdown wait up to 5 seconds for all buffered messages to send
@@ -73,5 +65,6 @@ public:
 
 private:
     std::string topic_;
+    int shard_id_;
     std::unique_ptr<RdKafka::Producer> producer_;
 };

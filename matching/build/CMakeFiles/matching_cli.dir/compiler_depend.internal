@@ -5,12 +5,14 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o
  /home/collin/programming/flux/matching/src/main.cpp
  /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/stl.h
  /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/unordered_dense.h
- /home/collin/programming/flux/matching/include/events.h
+ /home/collin/programming/flux/matching/include/engine/freelist.h
+ /home/collin/programming/flux/matching/include/engine/matching_engine.h
+ /home/collin/programming/flux/matching/include/engine/swaplist.h
+ /home/collin/programming/flux/matching/include/events/events.h
+ /home/collin/programming/flux/matching/include/events/spsc_queue.h
  /home/collin/programming/flux/matching/include/globals.h
- /home/collin/programming/flux/matching/include/kafka_consumer.h
- /home/collin/programming/flux/matching/include/kafka_producer.h
- /home/collin/programming/flux/matching/include/matching_engine.h
- /home/collin/programming/flux/matching/include/spsc_queue.h
+ /home/collin/programming/flux/matching/include/kafka/kafka_consumer.h
+ /home/collin/programming/flux/matching/include/kafka/kafka_producer.h
  /home/collin/programming/flux/matching/include/threads.h
  /usr/include/alloca.h
  /usr/include/asm-generic/errno-base.h

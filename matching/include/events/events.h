@@ -42,9 +42,9 @@ struct EngineEvent {
 
     Type   type;
     union {
-        struct {int ext_id; int seq_no;} added_participant;
-        struct {int ext_rider_id; int ext_driver_id; double price;} matched_participant;
-        struct {int ext_id;} canceled_participant;
+        struct {int ext_id; int seq_no; int shard_id; double lat; double lon;} added_participant;
+        struct {int ext_rider_id; int ext_driver_id; double price; int shard_id;} matched_participant;
+        struct {int ext_id; int shard_id;} canceled_participant;
 
     };
 

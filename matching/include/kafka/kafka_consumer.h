@@ -42,14 +42,16 @@ public:
             throw std::runtime_error("create consumer failed: " + errstr);
         }
 
+        topic_ = topic;
+
         // subscribe to the topic
         // kafka assigns partitions to this consumer
         // with one partition per topic this is straightforward
-        std::vector<std::string> topics = {topic};
-        RdKafka::ErrorCode err = consumer_->subscribe(topics);
-        if (err != RdKafka::ERR_NO_ERROR) {
-            throw std::runtime_error("subscribe failed: " + RdKafka::err2str(err));
-        }
+        // std::vector<std::string> topics = {topic};
+        // RdKafka::ErrorCode err = consumer_->subscribe(topics);
+        // if (err != RdKafka::ERR_NO_ERROR) {
+        //     throw std::runtime_error("subscribe failed: " + RdKafka::err2str(err));
+        // }
     }
 
     std::optional<std::string> poll(int timeout_ms = 100) {
@@ -91,6 +93,18 @@ public:
         return result;
     }
 
+
+    // New: assign a single partition (no group.coordinator, no rebalance)
+    void assign_partition(int partition) {
+        RdKafka::TopicPartition *tp = RdKafka::TopicPartition::create(topic_, partition);
+        std::vector<RdKafka::TopicPartition*> partitions = {tp};
+        RdKafka::ErrorCode err = consumer_->assign(partitions);
+        delete tp;
+        if (err != RdKafka::ERR_NO_ERROR) {
+            throw std::runtime_error("Failed to assign partition: " + RdKafka::err2str(err));
+        }
+    }
+
     ~KafkaConsumer() {
         // cleanly tell kafka we're done
         // without this kafka thinks we crashed and waits for us to reconnect
@@ -99,4 +113,5 @@ public:
 
 private:
     std::unique_ptr<RdKafka::KafkaConsumer> consumer_;
+    std::string topic_;
 };

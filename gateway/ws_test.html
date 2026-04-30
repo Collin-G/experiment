@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>WebSocket Test</title></head>
+<body>
+    <h2>Ride Matching WebSocket Test</h2>
+    <div>
+        User ID: <input type="text" id="userId" value="1234">
+        <button onclick="connect()">Connect</button>
+        <button onclick="disconnect()">Disconnect</button>
+    </div>
+    <div>
+        <textarea id="log" rows="20" cols="80" readonly></textarea>
+    </div>
+    <script>
+        let ws = null;
+        function log(msg) {
+            const area = document.getElementById('log');
+            area.value += msg + '\n';
+            area.scrollTop = area.scrollHeight;
+        }
+        function connect() {
+            const userId = document.getElementById('userId').value;
+            const url = `ws://localhost:8000/ws?user_id=${userId}`;
+            ws = new WebSocket(url);
+            ws.onopen = () => log(`Connected to ${url}`);
+            ws.onmessage = (e) => log(`Received: ${e.data}`);
+            ws.onclose = () => log('Disconnected');
+            ws.onerror = (e) => log(`Error: ${e}`);
+        }
+        function disconnect() {
+            if (ws) ws.close();
+        }
+    </script>
+</body>
+</html>

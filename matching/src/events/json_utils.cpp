@@ -73,29 +73,42 @@ std::string serialize(const EngineEvent& ev) {
     nlohmann::json j;
     switch (ev.type) {
         case EngineEvent::Type::RIDER_ADDED:
-            j = {{"type", "RIDER_ADDED"},
-                 {"ext_id", ev.added_participant.ext_id},
-                 {"seq_no", ev.added_participant.seq_no}};
-            break;
-        case EngineEvent::Type::DRIVER_ADDED:
-            j = {{"type", "DRIVER_ADDED"},
-                 {"ext_id", ev.added_participant.ext_id},
-                 {"seq_no", ev.added_participant.seq_no}};
-            break;
-        case EngineEvent::Type::MATCHED:
-            j = {{"type",          "MATCHED"},
-                 {"ext_rider_id",  ev.matched_participant.ext_rider_id},
-                 {"ext_driver_id", ev.matched_participant.ext_driver_id},
-                 {"price",         ev.matched_participant.price}};
-            break;
-        case EngineEvent::Type::RIDER_CANCELED:
-            j = {{"type",   "RIDER_CANCELED"},
-                 {"ext_id", ev.canceled_participant.ext_id}};
-            break;
-        case EngineEvent::Type::DRIVER_CANCELED:
-            j = {{"type",   "DRIVER_CANCELED"},
-                 {"ext_id", ev.canceled_participant.ext_id}};
-            break;
+        j = {{"type", "RIDER_ADDED"},
+            {"ext_id", ev.added_participant.ext_id},
+            {"seq_no", ev.added_participant.seq_no},
+            {"shard_id", ev.added_participant.shard_id},   // add this line
+            {"lat", ev.added_participant.lat},
+            {"lon", ev.added_participant.lon}};
+        break;
+
+    case EngineEvent::Type::DRIVER_ADDED:
+        j = {{"type", "DRIVER_ADDED"},
+            {"ext_id", ev.added_participant.ext_id},
+            {"seq_no", ev.added_participant.seq_no},
+            {"shard_id", ev.added_participant.shard_id},  // add this line
+            {"lat", ev.added_participant.lat},
+            {"lon", ev.added_participant.lon}};
+        break;
+
+    case EngineEvent::Type::MATCHED:
+        j = {{"type", "MATCHED"},
+            {"ext_rider_id", ev.matched_participant.ext_rider_id},
+            {"ext_driver_id", ev.matched_participant.ext_driver_id},
+            {"price", ev.matched_participant.price},
+            {"shard_id", ev.matched_participant.shard_id}};   // add this line
+        break;
+
+    case EngineEvent::Type::RIDER_CANCELED:
+        j = {{"type", "RIDER_CANCELED"},
+            {"ext_id", ev.canceled_participant.ext_id},
+            {"shard_id", ev.canceled_participant.shard_id}};   // add this line
+        break;
+
+    case EngineEvent::Type::DRIVER_CANCELED:
+        j = {{"type", "DRIVER_CANCELED"},
+            {"ext_id", ev.canceled_participant.ext_id},
+            {"shard_id", ev.canceled_participant.shard_id}};   // add this line
+        break;
     }
     return j.dump();
 }

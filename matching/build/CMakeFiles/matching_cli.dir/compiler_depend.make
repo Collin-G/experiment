@@ -4,12 +4,14 @@
 CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matching/src/main.cpp \
   /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/stl.h \
   /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/unordered_dense.h \
-  /home/collin/programming/flux/matching/include/events.h \
+  /home/collin/programming/flux/matching/include/engine/freelist.h \
+  /home/collin/programming/flux/matching/include/engine/matching_engine.h \
+  /home/collin/programming/flux/matching/include/engine/swaplist.h \
+  /home/collin/programming/flux/matching/include/events/events.h \
+  /home/collin/programming/flux/matching/include/events/spsc_queue.h \
   /home/collin/programming/flux/matching/include/globals.h \
-  /home/collin/programming/flux/matching/include/kafka_consumer.h \
-  /home/collin/programming/flux/matching/include/kafka_producer.h \
-  /home/collin/programming/flux/matching/include/matching_engine.h \
-  /home/collin/programming/flux/matching/include/spsc_queue.h \
+  /home/collin/programming/flux/matching/include/kafka/kafka_consumer.h \
+  /home/collin/programming/flux/matching/include/kafka/kafka_producer.h \
   /home/collin/programming/flux/matching/include/threads.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
@@ -570,6 +572,10 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/nlohmann/json.hpp:
 
+/usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h:
+
+/usr/include/nlohmann/detail/value_t.hpp:
+
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
 
 /usr/include/c++/11/bits/stringfwd.h:
@@ -581,8 +587,6 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 /home/collin/programming/flux/matching/include/globals.h:
 
 /usr/include/c++/11/bits/streambuf_iterator.h:
-
-/usr/include/c++/11/system_error:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
@@ -652,6 +656,24 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/tr1/bessel_function.tcc:
 
+/usr/include/x86_64-linux-gnu/bits/signum-generic.h:
+
+/usr/include/c++/11/bits/quoted_string.h:
+
+/usr/include/c++/11/bits/valarray_after.h:
+
+/usr/include/c++/11/backward/auto_ptr.h:
+
+/usr/include/nlohmann/detail/conversions/from_json.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/nlohmann/detail/iterators/iteration_proxy.hpp:
+
+/usr/include/c++/11/bits/predefined_ops.h:
+
+/home/collin/programming/flux/matching/include/kafka/kafka_producer.h:
+
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/c++/11/bits/postypes.h:
@@ -670,10 +692,6 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/ostream_insert.h:
 
-/usr/include/c++/11/bits/valarray_array.h:
-
-/usr/include/c++/11/cwctype:
-
 /usr/include/x86_64-linux-gnu/bits/sigstack.h:
 
 /usr/include/c++/11/clocale:
@@ -687,6 +705,10 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 /usr/include/c++/11/bits/ostream.tcc:
 
 /usr/include/nlohmann/detail/meta/detected.hpp:
+
+/usr/include/c++/11/bits/hash_bytes.h:
+
+/usr/include/c++/11/bits/move.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
@@ -716,27 +738,31 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/tr1/gamma.tcc:
 
-/usr/include/c++/11/bits/unordered_map.h:
+/usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h:
 
-/home/collin/programming/flux/matching/include/kafka_producer.h:
+/usr/include/c++/11/bits/ios_base.h:
 
-/usr/include/c++/11/bits/uniform_int_dist.h:
+/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
 
-/usr/include/c++/11/bits/basic_ios.h:
+/usr/include/asm-generic/errno.h:
 
-/usr/include/c++/11/bits/localefwd.h:
+/usr/include/c++/11/tr1/ell_integral.tcc:
 
-/usr/include/c++/11/tr1/hypergeometric.tcc:
+/usr/include/nlohmann/adl_serializer.hpp:
 
-/usr/include/c++/11/bits/allocated_ptr.h:
-
-/usr/include/nlohmann/detail/conversions/to_chars.hpp:
-
-/usr/include/c++/11/bits/refwrap.h:
+/home/collin/programming/flux/matching/include/kafka/kafka_consumer.h:
 
 /usr/include/c++/11/bits/align.h:
 
 /usr/include/c++/11/vector:
+
+/usr/include/c++/11/system_error:
+
+/usr/include/c++/11/bits/invoke.h:
+
+/usr/include/c++/11/bits/atomic_base.h:
+
+/usr/include/c++/11/ext/numeric_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h:
 
@@ -744,13 +770,37 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/list.tcc:
 
-/usr/include/c++/11/bits/locale_facets_nonio.h:
+/usr/include/c++/11/bits/stl_tree.h:
+
+/usr/include/c++/11/tuple:
+
+/usr/include/x86_64-linux-gnu/sys/single_threaded.h:
+
+/usr/include/c++/11/type_traits:
+
+/usr/include/stdc-predef.h:
+
+/usr/include/c++/11/bits/alloc_traits.h:
+
+/usr/include/c++/11/bits/localefwd.h:
+
+/usr/include/c++/11/tr1/hypergeometric.tcc:
+
+/usr/include/nlohmann/detail/hash.hpp:
+
+/usr/include/c++/11/bits/specfun.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/c++/11/bits/char_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
 
 /usr/include/c++/11/bits/functexcept.h:
 
 /usr/include/c++/11/streambuf:
+
+/usr/include/c++/11/bits/locale_facets_nonio.h:
 
 /home/collin/programming/flux/third-party/unordered_dense/include/ankerl/unordered_dense.h:
 
@@ -762,35 +812,39 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/fs_path.h:
 
-/usr/include/alloca.h:
+/usr/include/c++/11/bits/allocated_ptr.h:
 
-/usr/include/c++/11/bits/atomic_base.h:
+/usr/include/nlohmann/detail/conversions/to_chars.hpp:
 
-/usr/include/c++/11/ext/numeric_traits.h:
-
-/home/collin/programming/flux/matching/include/events.h:
-
-/usr/include/c++/11/backward/binders.h:
+/usr/include/c++/11/bits/refwrap.h:
 
 /usr/include/c++/11/algorithm:
 
+/usr/include/c++/11/backward/binders.h:
+
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+
+/home/collin/programming/flux/matching/include/events/events.h:
 
 /usr/include/c++/11/bits/node_handle.h:
 
 /usr/include/c++/11/iostream:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+/usr/include/c++/11/bits/uniform_int_dist.h:
 
-/usr/include/asm-generic/errno.h:
+/usr/include/c++/11/bits/basic_ios.h:
 
-/usr/include/c++/11/tr1/ell_integral.tcc:
+/home/collin/programming/flux/matching/include/engine/matching_engine.h:
 
-/usr/include/nlohmann/adl_serializer.hpp:
+/usr/include/c++/11/bits/fs_ops.h:
 
-/usr/include/x86_64-linux-gnu/bits/signum-generic.h:
+/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
 
-/usr/include/c++/11/bits/quoted_string.h:
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+/usr/include/c++/11/tr1/legendre_function.tcc:
+
+/usr/include/alloca.h:
 
 /usr/include/c++/11/atomic:
 
@@ -806,47 +860,7 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /home/collin/programming/flux/matching/include/threads.h:
 
-/usr/include/c++/11/bits/valarray_after.h:
-
-/usr/include/c++/11/bits/hash_bytes.h:
-
-/usr/include/c++/11/bits/move.h:
-
-/home/collin/programming/flux/matching/include/spsc_queue.h:
-
-/usr/include/c++/11/backward/auto_ptr.h:
-
-/usr/include/nlohmann/detail/conversions/from_json.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/typesizes.h:
-
-/usr/include/nlohmann/detail/iterators/iteration_proxy.hpp:
-
-/usr/include/c++/11/bits/predefined_ops.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
-
-/usr/include/c++/11/bits/forward_list.h:
-
-/usr/include/c++/11/bits/stl_tree.h:
-
-/home/collin/programming/flux/matching/include/kafka_consumer.h:
-
-/usr/include/c++/11/tuple:
-
-/usr/include/x86_64-linux-gnu/sys/single_threaded.h:
-
-/usr/include/c++/11/type_traits:
-
-/usr/include/stdc-predef.h:
-
-/usr/include/c++/11/bits/alloc_traits.h:
-
-/usr/include/c++/11/bits/specfun.h:
-
-/usr/include/asm-generic/errno-base.h:
-
-/usr/include/c++/11/bits/char_traits.h:
+/usr/include/c++/11/bits/unordered_map.h:
 
 /usr/include/c++/11/bits/charconv.h:
 
@@ -860,9 +874,9 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/basic_string.tcc:
 
-/usr/include/c++/11/bits/basic_ios.tcc:
-
 /usr/include/c++/11/bits/enable_special_members.h:
+
+/usr/include/c++/11/bits/basic_ios.tcc:
 
 /usr/include/c++/11/bits/codecvt.h:
 
@@ -924,9 +938,11 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/pstl/glue_numeric_defs.h:
 
-/home/collin/programming/flux/matching/include/matching_engine.h:
-
 /usr/include/nlohmann/detail/conversions/to_json.hpp:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
+
+/usr/include/c++/11/bits/forward_list.h:
 
 /usr/include/c++/11/bits/std_abs.h:
 
@@ -944,13 +960,13 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/nested_exception.h:
 
-/usr/include/c++/11/bits/fs_ops.h:
+/home/collin/programming/flux/matching/include/events/spsc_queue.h:
 
-/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
+/usr/include/nlohmann/json_fwd.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+/usr/include/c++/11/array:
 
-/usr/include/c++/11/tr1/legendre_function.tcc:
+/usr/include/c++/11/tr1/beta_function.tcc:
 
 /usr/include/c++/11/bits/gslice_array.h:
 
@@ -980,13 +996,15 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/bits/hashtable.h:
 
-/usr/include/c++/11/bits/invoke.h:
+/usr/include/c++/11/bits/valarray_array.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h:
-
-/usr/include/c++/11/bits/ios_base.h:
+/usr/include/c++/11/cwctype:
 
 /usr/include/c++/11/bits/valarray_before.h:
+
+/usr/include/nlohmann/detail/string_escape.hpp:
+
+/usr/include/c++/11/bits/vector.tcc:
 
 /usr/include/c++/11/optional:
 
@@ -1094,12 +1112,6 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/c++/11/thread:
 
-/usr/include/nlohmann/json_fwd.hpp:
-
-/usr/include/c++/11/array:
-
-/usr/include/c++/11/tr1/beta_function.tcc:
-
 /usr/include/c++/11/tr1/modified_bessel_func.tcc:
 
 /usr/include/libintl.h:
@@ -1113,6 +1125,8 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 /usr/include/c++/11/tr1/riemann_zeta.tcc:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h:
+
+/home/collin/programming/flux/matching/include/engine/swaplist.h:
 
 /usr/include/c++/11/ios:
 
@@ -1140,8 +1154,6 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 
 /usr/include/nlohmann/byte_container_with_subtype.hpp:
 
-/usr/include/nlohmann/detail/hash.hpp:
-
 /usr/include/nlohmann/detail/input/input_adapters.hpp:
 
 /usr/include/nlohmann/detail/meta/call_std/end.hpp:
@@ -1149,6 +1161,8 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 /usr/include/nlohmann/detail/input/json_sax.hpp:
 
 /usr/include/nlohmann/detail/input/parser.hpp:
+
+/home/collin/programming/flux/matching/include/engine/freelist.h:
 
 /usr/include/nlohmann/detail/iterators/internal_iterator.hpp:
 
@@ -1179,11 +1193,3 @@ CMakeFiles/matching_cli.dir/src/main.cpp.o: /home/collin/programming/flux/matchi
 /usr/include/nlohmann/detail/output/output_adapters.hpp:
 
 /usr/include/nlohmann/detail/output/serializer.hpp:
-
-/usr/include/c++/11/bits/vector.tcc:
-
-/usr/include/nlohmann/detail/string_escape.hpp:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h:
-
-/usr/include/nlohmann/detail/value_t.hpp:

@@ -49,10 +49,6 @@ struct MatchResult {
     };
 
 
-
-    
-
-
     struct CellState {
         size_t cursor = 0;
         SwapList<std::tuple<int, int>> swap_list;
