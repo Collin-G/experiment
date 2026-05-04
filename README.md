@@ -24,7 +24,7 @@ The tradeoff vs. centralized pricing is **liquidity risk** — if not enough par
 
 ## Driver UI
 
-The driver dashboard (`/driver`) allows drivers to see nearby auction riders, sort by distance or bid, and place asks.  
+The driver dashboard allows drivers to see nearby auction riders, sort by distance or bid, and place asks.  
 ![Driver Dashboard](./dashboard.png)
 
 ## High-Level Architecture
