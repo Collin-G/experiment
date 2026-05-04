@@ -104,12 +104,19 @@ void MatchingEngine::clean_rider(int int_rider_id) {
 // matching_engine.cpp
 std::vector<MatchResult> MatchingEngine::make_matches() {
     std::vector<MatchResult> results;
+    std::vector<int> to_remove;
 
-    for (size_t i = 0; i < interest_map_.size();) {
+
+    interest_map_.sort([&](const std::tuple<int,int>& a, const std::tuple<int,int>& b) {
+    return riders_[std::get<0>(a)].bid > riders_[std::get<0>(b)].bid;
+    });
+
+    for (size_t i = 0; i < interest_map_.size(); ++i) {
         auto& [id, seq_no] = interest_map_[i];
         Rider& rider = riders_[id];
         if (rider.state != OrderState::Active || seq_no != riders_.seq_no(id)) {
-            interest_map_.free(i);
+            to_remove.push_back(i);
+            // interest_map_.free(i);
             continue;
         }
 
@@ -152,10 +159,16 @@ std::vector<MatchResult> MatchingEngine::make_matches() {
             });
 
             match_pair(best_driver, id, best_ask, second_ask, bid);
-            interest_map_.free(i);
-        } else {
-            ++i;
-        }
+            to_remove.push_back(i);
+            // interest_map_.free(i);
+        } 
+        // else {
+            // ++i;
+        // }
+    }
+
+    for (int k = to_remove.size()-1; k > -1; --k){
+        interest_map_.free(to_remove[k]);
     }
 
     return results;

@@ -49,4 +49,7 @@ template<typename T>
        
             size_t size() const { return pool.size(); }
 
+            void sort(std::function<bool(const T&, const T&)> comp) {
+                std::sort(pool.begin(), pool.end(), comp);
+            }
      };
