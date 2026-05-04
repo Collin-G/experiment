@@ -29,7 +29,7 @@ until docker exec $KAFKA \
 done
 echo "kafka ready"
 
-NUM_SHARDS=10
+NUM_SHARDS=3
 # ── create topics (only once, so check if they exist first) ───────────────────
 for TOPIC in commands events; do
     docker exec $KAFKA kafka-topics --create \
@@ -43,4 +43,4 @@ done
 
 # ── start engine ──────────────────────────────────────────────────────────────
 echo "starting engine for shard $SHARD_ID..."
-exec matching/build/matching_cli --shard_id $SHARD_ID
+matching/build/matching_cli --shard_id $SHARD_ID

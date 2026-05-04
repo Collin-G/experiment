@@ -1,0 +1,19 @@
+# Ignore everything
+*
+
+# But not these file types
+!*.py
+!*.go
+!*.h
+!*.cpp
+!*.sh
+!*.txt
+
+# Always include CMakeLists.txt files
+!CMakeLists.txt
+
+# Exclude files in .gitignore itself
+!.gitignore
+
+# Optionally, keep README.md if you want
+#!README.md
