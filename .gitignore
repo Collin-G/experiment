@@ -12,8 +12,11 @@
 # Always include CMakeLists.txt files
 !CMakeLists.txt
 
-# Exclude files in .gitignore itself
+# Always include .gitignore itself
 !.gitignore
 
-# Optionally, keep README.md if you want
-#!README.md
+# Always include README.md
+!README.md
+
+# Un-ignore all directories so their structure is kept if they contain allowed files
+!*/

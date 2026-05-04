@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmatching.a CMakeFiles/matching.dir/src/engine/matching_engine.cpp.o CMakeFiles/matching.dir/src/threads.cpp.o CMakeFiles/matching.dir/src/events/json_utils.cpp.o
+/usr/bin/ranlib libmatching.a

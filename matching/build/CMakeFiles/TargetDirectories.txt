@@ -1,0 +1,4 @@
+/home/collin/programming/flux/matching/build/CMakeFiles/matching.dir
+/home/collin/programming/flux/matching/build/CMakeFiles/matching_cli.dir
+/home/collin/programming/flux/matching/build/CMakeFiles/edit_cache.dir
+/home/collin/programming/flux/matching/build/CMakeFiles/rebuild_cache.dir
