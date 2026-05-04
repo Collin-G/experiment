@@ -1,4 +1,4 @@
-# Flux — Auction-Based Ride Matching Engine
+# Auction-Based Ride Matching Engine
 
 ## Motivation
 
@@ -7,7 +7,7 @@ Uber and similar platforms centralize price determination, typically using ML mo
 1. **The price can be out of touch with real market conditions** — it's an estimate, not a discovered price.
 2. **It's expensive to compute** — large ML inference pipelines run on every request.
 
-Flux experiments with a different model: **a decentralized auction market** where drivers and riders post their own prices. The idea is borrowed from financial markets — let supply and demand discover the price rather than predict it.
+This ride matching system experiments with a different model: **a decentralized auction market** where drivers and riders post their own prices. The idea is borrowed from financial markets — let supply and demand discover the price rather than predict it.
 
 The two core auction mechanisms are:
 
