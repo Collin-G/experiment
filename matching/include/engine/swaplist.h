@@ -1,14 +1,16 @@
 #pragma once
-    #include <vector>
-    #include <optional>
-    #include <tuple>
-    #include <vector>
-    #include <list>
-    #include <string>
-    #include <h3/h3api.h>
-    #include <memory>
-    #include <sstream>
-    #include <iostream>
+#include <vector>
+#include <optional>
+#include <tuple>
+#include <vector>
+#include <list>
+#include <string>
+#include <h3/h3api.h>
+#include <memory>
+#include <sstream>
+#include <iostream>
+#include <algorithm>   // for std::sort
+#include <functional>  // for std::function
     
 template<typename T>
     class SwapList{
@@ -49,7 +51,8 @@ template<typename T>
        
             size_t size() const { return pool.size(); }
 
-            void sort(std::function<bool(const T&, const T&)> comp) {
+            template<typename Compare>
+            void sort(Compare comp) {
                 std::sort(pool.begin(), pool.end(), comp);
             }
      };

@@ -237,14 +237,13 @@ When a slot is freed, its `seq_no` increments. Any in-flight command with the ol
 5. If this is the rider's first interested driver, appends `(int_rider_id, r_seq_no)` to `interest_map_` and marks `rider.interesting = true`. This ensures a rider appears in the batch match queue exactly once, regardless of how many drivers express interest.
 
 **`make_matches()`** (called every 30 seconds by the engine thread):
-Iterates over `interest_map_`. For each active rider:
-- Scans `interested_drivers`, skipping any with stale sequence numbers.
-- Finds the lowest ask (`best_ask`) and second-lowest ask (`second_ask`).
-- Matches the rider with the best-ask driver at `clearing_price = second_ask` (or `best_ask` if only one driver expressed interest — Vickrey rule).
-- Calls `match_pair()` which sets both parties to `Matched` state and cleans them from the engine.
-
-**`instant_match(ext_rider_id, rsn, ext_driver_id, dsn)`**:
-Validates that the rider is in `Instant` mode, both are `Active`, and sequence numbers match. Clears at `rider.bid` (no auction — first driver to claim it pays the posted price).
+- First, the list of riders with interest (`interest_map_`) is **sorted in descending order of rider bid** (highest bid first).
+- Then, for each rider in this sorted order:
+  - Scans `interested_drivers`, skipping any with stale sequence numbers.
+  - Finds the lowest ask (`best_ask`) and second‑lowest ask (`second_ask`).
+  - Matches the rider with the best‑ask driver at `clearing_price = second_ask` (or `best_ask` if only one driver expressed interest – Vickrey rule).
+  - Calls `match_pair()` which sets both parties to `Matched` state and cleans them from the engine.
+- After processing all riders, stale entries (inactive or wrong seq_no) and matched riders are removed from `interest_map_` (using a deferred removal that frees indices in descending order to preserve correctness with `SwapList`).
 
 ---
 
@@ -283,8 +282,10 @@ Rider posts bid B (their maximum willingness to pay).
 Drivers browse nearby riders and post asks A₁, A₂, A₃, ...
 → All asks must satisfy Aᵢ ≤ B (enforced in driver_interest()).
 → Every 30 seconds, batch match runs:
-    Winner = driver with lowest ask Aₘᵢₙ
-    Price  = second-lowest ask A₂ₙₐ (or Aₘᵢₙ if only one driver)
+→ Riders are sorted by bid (highest first).
+→ For each rider in that order:
+Winner = driver with lowest ask Aₘᵢₙ
+Price = second-lowest ask A₂ₙₐ (or Aₘᵢₙ if only one driver)
 ```
 
 The second-price rule is the key mechanism for **truthful bidding**: a driver can never benefit from posting a higher ask (they just lose the match) or a lower ask (they win but pay the same price anyway — set by the second bidder). The equilibrium strategy is to post your true cost.
