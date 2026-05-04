@@ -9,6 +9,10 @@
 !*.sh
 !*.txt
 
+# PNG and SVG for documentation
+!*.png
+!*.svg
+
 # Always include CMakeLists.txt files
 !CMakeLists.txt
 

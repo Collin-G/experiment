@@ -1,5 +1,8 @@
 # Auction-Based Ride Matching Engine
 
+
+![Data Flow Diagram](./data_flow.svg)
+
 ## Motivation
 
 Uber and similar platforms centralize price determination, typically using ML models to set a "surge" price. This has two problems:
@@ -17,6 +20,12 @@ The two core auction mechanisms are:
 The tradeoff vs. centralized pricing is **liquidity risk** — if not enough participants are active, matches don't happen. A future simulator will test different matching algorithms, UI indicators, and parameter choices to explore this tradeoff.
 
 ---
+
+
+## Driver UI
+
+The driver dashboard (`/driver`) allows drivers to see nearby auction riders, sort by distance or bid, and place asks.  
+![Driver Dashboard](./dashboard.png)
 
 ## High-Level Architecture
 
