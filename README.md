@@ -1,7 +1,4 @@
-# Auction-Based Ride Matching Engine
-
-
-![Data Flow Diagram](./data_flow.svg)
+# Flux — Auction-Based Ride Matching Engine
 
 ## Motivation
 
@@ -10,7 +7,7 @@ Uber and similar platforms centralize price determination, typically using ML mo
 1. **The price can be out of touch with real market conditions** — it's an estimate, not a discovered price.
 2. **It's expensive to compute** — large ML inference pipelines run on every request.
 
-This ride matching system experiments with a different model: **a decentralized auction market** where drivers and riders post their own prices. The idea is borrowed from financial markets — let supply and demand discover the price rather than predict it.
+Flux experiments with a different model: **a decentralized auction market** where drivers and riders post their own prices. The idea is borrowed from financial markets — let supply and demand discover the price rather than predict it.
 
 The two core auction mechanisms are:
 
@@ -20,12 +17,6 @@ The two core auction mechanisms are:
 The tradeoff vs. centralized pricing is **liquidity risk** — if not enough participants are active, matches don't happen. A future simulator will test different matching algorithms, UI indicators, and parameter choices to explore this tradeoff.
 
 ---
-
-
-## Driver UI
-
-The driver dashboard allows drivers to see nearby auction riders, sort by distance or bid, and place asks.  
-![Driver Dashboard](./dashboard.png)
 
 ## High-Level Architecture
 
@@ -196,14 +187,24 @@ A `SwapList<T>` is a `std::vector` where **`free(idx)`** swaps the element with 
 1. `interest_map_` — the list of riders that have at least one interested driver. The engine iterates over this during `make_matches()`.
 2. `Rider::interested_drivers` — the list of `(int_driver_id, d_seq_no, ask)` tuples for each rider.
 
-Because `free()` swaps, iteration during `make_matches()` uses an index that does **not** increment when an item is freed:
+It also exposes a templated `sort()` that delegates to `std::sort` over the internal vector, used to order `interest_map_` before each match cycle:
 
 ```cpp
-for (size_t i = 0; i < interest_map_.size();) {
-    // if stale, free and DON'T increment i — the swapped-in element needs checking
-    interest_map_.free(i);   // continues at same i
-    // if valid, process and increment i
-    ++i;
+template<typename Compare>
+void sort(Compare comp) {
+    std::sort(pool.begin(), pool.end(), comp);
+}
+```
+
+Because `free()` invalidates indices by swapping, `make_matches()` does a **full forward pass first** (collecting indices to remove into a `to_remove` vector), then frees them in **descending index order**. Freeing descending means each swap only affects indices that have already been processed, so no element is skipped or double-freed:
+
+```cpp
+// collect during pass
+to_remove.push_back(i);
+
+// remove after pass, back-to-front
+for (int k = to_remove.size()-1; k > -1; --k) {
+    interest_map_.free(to_remove[k]);
 }
 ```
 
@@ -237,13 +238,14 @@ When a slot is freed, its `seq_no` increments. Any in-flight command with the ol
 5. If this is the rider's first interested driver, appends `(int_rider_id, r_seq_no)` to `interest_map_` and marks `rider.interesting = true`. This ensures a rider appears in the batch match queue exactly once, regardless of how many drivers express interest.
 
 **`make_matches()`** (called every 30 seconds by the engine thread):
-- First, the list of riders with interest (`interest_map_`) is **sorted in descending order of rider bid** (highest bid first).
-- Then, for each rider in this sorted order:
-  - Scans `interested_drivers`, skipping any with stale sequence numbers.
-  - Finds the lowest ask (`best_ask`) and second‑lowest ask (`second_ask`).
-  - Matches the rider with the best‑ask driver at `clearing_price = second_ask` (or `best_ask` if only one driver expressed interest – Vickrey rule).
-  - Calls `match_pair()` which sets both parties to `Matched` state and cleans them from the engine.
-- After processing all riders, stale entries (inactive or wrong seq_no) and matched riders are removed from `interest_map_` (using a deferred removal that frees indices in descending order to preserve correctness with `SwapList`).
+Iterates over `interest_map_`. For each active rider:
+- Scans `interested_drivers`, skipping any with stale sequence numbers.
+- Finds the lowest ask (`best_ask`) and second-lowest ask (`second_ask`).
+- Matches the rider with the best-ask driver at `clearing_price = second_ask` (or `best_ask` if only one driver expressed interest — Vickrey rule).
+- Calls `match_pair()` which sets both parties to `Matched` state and cleans them from the engine.
+
+**`instant_match(ext_rider_id, rsn, ext_driver_id, dsn)`**:
+Validates that the rider is in `Instant` mode, both are `Active`, and sequence numbers match. Clears at `rider.bid` (no auction — first driver to claim it pays the posted price).
 
 ---
 
@@ -282,10 +284,8 @@ Rider posts bid B (their maximum willingness to pay).
 Drivers browse nearby riders and post asks A₁, A₂, A₃, ...
 → All asks must satisfy Aᵢ ≤ B (enforced in driver_interest()).
 → Every 30 seconds, batch match runs:
-→ Riders are sorted by bid (highest first).
-→ For each rider in that order:
-Winner = driver with lowest ask Aₘᵢₙ
-Price = second-lowest ask A₂ₙₐ (or Aₘᵢₙ if only one driver)
+    Winner = driver with lowest ask Aₘᵢₙ
+    Price  = second-lowest ask A₂ₙₐ (or Aₘᵢₙ if only one driver)
 ```
 
 The second-price rule is the key mechanism for **truthful bidding**: a driver can never benefit from posting a higher ask (they just lose the match) or a lower ask (they win but pay the same price anyway — set by the second bidder). The equilibrium strategy is to post your true cost.
