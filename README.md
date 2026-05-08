@@ -1,7 +1,5 @@
 # Auction-Based Ride Matching Engine
 
-![Data Flow Diagram](./data_flow.svg)
-
 ## Motivation
 
 Uber and similar platforms centralize price determination, typically using ML models to set a "surge" price. This has two problems:
@@ -26,6 +24,8 @@ The driver dashboard allows drivers to see nearby auction riders, sort by distan
 ![Driver Dashboard](./dashboard.png)
 
 ## High-Level Architecture
+
+![Data Flow Diagram](./data_flow.svg)
 
 ```
   Client (HTTP / WebSocket)
